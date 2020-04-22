@@ -102,6 +102,7 @@ public class Main {
             HSSFCellStyle contentStyle4Note =   workBook.createCellStyle();
             contentStyle4Note.setAlignment(HorizontalAlignment.CENTER);
             contentStyle4Note.setVerticalAlignment(VerticalAlignment.CENTER);
+            contentStyle4Note.setWrapText(true);
             HSSFFont noteFont = workBook.createFont();
             noteFont.setBold(true);
             noteFont.setColor(IndexedColors.RED.getIndex());
@@ -116,6 +117,7 @@ public class Main {
 
             //默认的输出单元样式
             HSSFCellStyle contentStyle =   workBook.createCellStyle();
+            contentStyle.setWrapText(true);
             contentStyle.setAlignment(HorizontalAlignment.CENTER);
             contentStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
@@ -341,9 +343,9 @@ public class Main {
                             task.setNote((String)cellData);
                         }else if(columns[j].equals("特殊备注")){
                             task.setSpecialNote((String)cellData);
-                        }else if(columns[j].equals("搜索关键词1")){
+                        }else if(columns[j].equals("关键词1")){
                             task.setKeyWord1((String)cellData);
-                        }else if(columns[j].equals("搜索关键词2")){
+                        }else if(columns[j].equals("关键词2")){
                             task.setKeyWord2((String)cellData);
                         }
                     }
