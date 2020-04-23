@@ -187,7 +187,7 @@ public class Main {
                 workBook.write(os);// 将Excel写入输出流中
                 byte[] fileContent = os.toByteArray();// 将输出流转换成字节数组
                 os.close();
-                OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd"))+ "-" + i +".xlsx");
+                OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd"))+ "-" + i +".xls");
                 out.write(fileContent);
                 out.close();
                 workBook.close();
