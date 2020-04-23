@@ -19,7 +19,8 @@ public class Main {
     private static int counter = 1;
     //经算法处理后的列表
     private static List<List<TaskExcel>> exportList = new ArrayList<>();
-
+    //任务编号的历史列表
+    private static List<List<String>> taskNoHistoryList = new ArrayList<>();
 
     public static void main(String[] args) {
         isOrNotVaild();
@@ -35,7 +36,6 @@ public class Main {
             System.out.println("程序失效了");
             System.exit(0);
         }
-
     }
 
     /**
@@ -77,7 +77,11 @@ public class Main {
                 HSSFCell headerCell = headerRow.createCell(k);
                 headerCell.setCellValue(ImportExcel.EXCEL_HEADER[k]);
                 headerCell.setCellStyle(headerStyle);
-                sheet.setColumnWidth(k, 255 * 15);
+                if(ImportExcel.EXCEL_HEADER[k].equals("主图")){
+                    sheet.setColumnWidth(k, 255 * 30);
+                }else {
+                    sheet.setColumnWidth(k, 255 * 15);
+                }
             }
 
             //任务编号单元的样式
@@ -235,7 +239,7 @@ public class Main {
                while (listIterator.hasPrevious()){ //逆向遍历
                    TaskExcel taskExcel = listIterator.previous();
                    //小组中的任务编号不能重复
-                   if(IsSameTaskNo(taskExcel, subList)){
+                   if(isSameTaskNo(taskExcel, subList)){
                        continue;
                    }
                    subList.add(taskExcel);
@@ -252,7 +256,7 @@ public class Main {
                while (listIterator.hasNext()){
                    TaskExcel taskExcel = listIterator.next();
                    //小组中的任务编号不能重复
-                   if(IsSameTaskNo(taskExcel, subList)){
+                   if(isSameTaskNo(taskExcel, subList)) {
                        continue;
                    }
                    subList.add(taskExcel);
@@ -272,22 +276,60 @@ public class Main {
                while (listIterator.hasPrevious()){ //逆向遍历
                    TaskExcel taskExcel = listIterator.previous();
                    //小组中的任务编号不能重复
-                   if(IsSameTaskNo(taskExcel, subList)){
-                       //如果匹配不到就送入未能匹配队列
+                   if(isSameTaskNo(taskExcel, subList)){
                        continue;
-                   }
+                   }else if(isExistHistoryTaskNo(taskExcel, subList)){
+                       continue;
+                    }
                    subList.add(taskExcel);
                    listIterator.remove();
                    break;
                }
                exportList.add(subList);
+               setHistoryTaskNoList(subList);
                counter = 1;
            }
         }
        System.out.println("匹配数据完毕...");
     }
 
-    private static boolean IsSameTaskNo(TaskExcel taskExcel, List<TaskExcel> subList) {
+    /**
+     * 判断历史存在的小组编号
+     *
+     * */
+    private static boolean isExistHistoryTaskNo(TaskExcel taskExcel1, List<TaskExcel> subList) {
+        //对于小于3的小组不校验
+        if(subList.size() < 3) return false;
+        //元素相同的个数
+        int sameNum = 0;
+        for(List<String> taskNOList : taskNoHistoryList){
+            for(TaskExcel taskExcel : subList){
+                if(taskNOList.indexOf(taskExcel.getTaskNo()) > -1){
+                    sameNum ++;
+                }
+            }
+            if(taskNOList.indexOf(taskExcel1.getTaskNo()) > -1){
+                sameNum ++;
+            }
+            if(sameNum == 4){
+                return true;
+            }
+            sameNum = 0;
+        }
+        return false;
+    }
+
+    private static void setHistoryTaskNoList(List<TaskExcel> subList) {
+        //对于小于4的小组不存历史
+        if(subList.size() < 4) return;
+        List<String> taskNoList = new ArrayList<>();
+        for(TaskExcel taskExcel: subList){
+            taskNoList.add(taskExcel.getTaskNo());
+        }
+        taskNoHistoryList.add(taskNoList);
+    }
+
+    private static boolean isSameTaskNo(TaskExcel taskExcel, List<TaskExcel> subList) {
         for(TaskExcel taskExcel1 : subList){
             if(taskExcel1.getTaskNo().equals(taskExcel.getTaskNo())){
                 return true;
