@@ -66,7 +66,7 @@ public class Main {
             HSSFRow headerRow = sheet.createRow(0);// 创建首行，并赋值
             HSSFFont headFont = workBook.createFont();
             headFont.setFontName("仿宋_GB2312");
-            headFont.setFontHeightInPoints((short) 12);
+            headFont.setFontHeightInPoints((short) 14);
             headFont.setBold(true);
             HSSFCellStyle headerStyle = workBook.createCellStyle();
             headerStyle.setFont(headFont);
@@ -77,12 +77,17 @@ public class Main {
                 HSSFCell headerCell = headerRow.createCell(k);
                 headerCell.setCellValue(ImportExcel.EXCEL_HEADER[k]);
                 headerCell.setCellStyle(headerStyle);
-                if(ImportExcel.EXCEL_HEADER[k].equals("主图")){
+                if(ImportExcel.EXCEL_HEADER[k].equals("主图") || ImportExcel.EXCEL_HEADER[k].equals("店铺名称（非掌柜名）")){
                     sheet.setColumnWidth(k, 255 * 30);
-                }else {
+                } else {
                     sheet.setColumnWidth(k, 255 * 15);
                 }
             }
+
+            HSSFFont bodyFont = workBook.createFont();
+            bodyFont.setFontName("仿宋_GB2312");
+            bodyFont.setFontHeightInPoints((short) 12);
+            bodyFont.setBold(true);
 
             //任务编号单元的样式
             HSSFCellStyle contentStyle4TaskNo =   workBook.createCellStyle();
@@ -98,9 +103,7 @@ public class Main {
             contentStyle4TaskNo.setRightBorderColor(IndexedColors.YELLOW.getIndex());
             contentStyle4TaskNo.setBorderTop(BorderStyle.DOUBLE);
             contentStyle4TaskNo.setRightBorderColor(IndexedColors.YELLOW.getIndex());
-            HSSFFont taskNoFont = workBook.createFont();
-            taskNoFont.setBold(true);
-            contentStyle4TaskNo.setFont(taskNoFont);
+            contentStyle4TaskNo.setFont(bodyFont);
 
             //备注样式
             HSSFCellStyle contentStyle4Note =   workBook.createCellStyle();
@@ -109,12 +112,14 @@ public class Main {
             contentStyle4Note.setWrapText(true);
             HSSFFont noteFont = workBook.createFont();
             noteFont.setBold(true);
+            noteFont.setFontHeightInPoints((short) 12);
             noteFont.setColor(IndexedColors.RED.getIndex());
             contentStyle4Note.setFont(noteFont);
 
             //日期单元样式
             HSSFCellStyle dateStyle =   workBook.createCellStyle();
             HSSFCreationHelper createHelper = workBook.getCreationHelper();
+            dateStyle.setWrapText(true);
             dateStyle.setAlignment(HorizontalAlignment.CENTER);
             dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
             dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy/m/d"));
@@ -124,11 +129,12 @@ public class Main {
             contentStyle.setWrapText(true);
             contentStyle.setAlignment(HorizontalAlignment.CENTER);
             contentStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            contentStyle.setFont(bodyFont);
 
             for (int j = 0; j < exportList.get(i).size(); j++){
                 HSSFRow row = sheet.createRow(j + 1);
 
-                row.setHeight((short) 2799);
+                row.setHeight((short) 3219);
                 HSSFCell hssfCell0 = row.createCell(0);
                 hssfCell0.setCellValue(exportList.get(i).get(j).getTaskNo());
                 hssfCell0.setCellStyle(contentStyle4TaskNo);
@@ -187,7 +193,7 @@ public class Main {
                 workBook.write(os);// 将Excel写入输出流中
                 byte[] fileContent = os.toByteArray();// 将输出流转换成字节数组
                 os.close();
-                OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd"))+ "-" + i +".xls");
+                OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + (i+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
                 out.write(fileContent);
                 out.close();
                 workBook.close();
