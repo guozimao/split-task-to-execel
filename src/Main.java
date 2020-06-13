@@ -14,7 +14,7 @@ import java.util.*;
 public class Main {
 
     //任务列表
-    private static List<TaskExcel> taskExelList = new ArrayList<>();
+    private static List<TaskExcel> taskExelList = new LinkedList<>();
     //当前记录数
     private static int counter = 1;
     //经算法处理后的列表

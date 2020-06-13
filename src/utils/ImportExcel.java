@@ -111,7 +111,10 @@ public class ImportExcel {
                 HSSFPicture picture = (HSSFPicture) shape;
                 HSSFClientAnchor cAnchor = picture.getClientAnchor();
                 myPicture.setPictureData(picture.getPictureData());
-                for(TaskExcel task : taskList){
+
+                Iterator<TaskExcel> iterator = taskList.iterator();
+                while (iterator.hasNext()){
+                    TaskExcel task = iterator.next();
                     if(task.getRowNum() == cAnchor.getRow1()){
                         task.setMyPicture(myPicture);
                         break;
@@ -139,7 +142,10 @@ public class ImportExcel {
                     myPicture.setPictureData(picture.getPictureData());
                     XSSFClientAnchor anchor = picture.getPreferredSize();
                     CTMarker marker = anchor.getFrom();
-                    for(TaskExcel task : taskList){
+
+                    Iterator<TaskExcel> iterator = taskList.iterator();
+                    while (iterator.hasNext()){
+                        TaskExcel task = iterator.next();
                         if(marker.getRow() == task.getRowNum()){
                             task.setMyPicture(myPicture);
                             break;
