@@ -210,7 +210,7 @@ public class Main {
     }
 
     /**
-     * 分组算法（4个为一组，俩个最大的maxPrice加上两个最小的minPrice,并且TaskNo不能一样）
+     * 分组算法（n个为一组,n为分组基数,并且TaskNo不能一样，而且每组之间的价格尽可能接近）
      *
      * **/
     private static void doProcessTask() {
@@ -353,6 +353,10 @@ public class Main {
         return false;
     }
 
+    /**
+     * 添加历史分组taskNO记录
+     *
+     * */
     private static void setHistoryTaskNoList(List<TaskExcel> subList) {
         //对于小于基数的小组不存历史
         if(subList.size() < baseNum) {
@@ -365,6 +369,10 @@ public class Main {
         taskNoHistoryList.add(taskNoList);
     }
 
+    /**
+     * 判断是否有相同的taskNo
+     *
+     * **/
     private static boolean isSameTaskNo(TaskExcel taskExcel, List<TaskExcel> subList) {
         for(TaskExcel taskExcel1 : subList){
             if(taskExcel1.getTaskNo().equals(taskExcel.getTaskNo())){
