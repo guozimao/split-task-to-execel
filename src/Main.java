@@ -245,20 +245,35 @@ public class Main {
                     }
                 }else if(i == baseNum){ //最后一个元素
                     listIterator = taskExelList.listIterator();
-                    while (listIterator.hasNext()){
-                        listIterator.next();
-                    }
-                    while (listIterator.hasPrevious()){ //逆向遍历
-                        TaskExcel taskExcel = listIterator.previous();
-                        //小组中的任务编号不能重复
-                        if(isSameTaskNo(taskExcel, subList)){
-                            continue;
-                        }else if(isExistHistoryTaskNo(taskExcel, subList)){
-                            continue;
+                    if(baseNum % 2 == 0){ //偶数逆向遍历
+                        while (listIterator.hasNext()){
+                            listIterator.next();
                         }
-                        subList.add(taskExcel);
-                        listIterator.remove();
-                        break;
+                        while (listIterator.hasPrevious()){
+                            TaskExcel taskExcel = listIterator.previous();
+                            //小组中的任务编号不能重复
+                            if(isSameTaskNo(taskExcel, subList)){
+                                continue;
+                            }else if(isExistHistoryTaskNo(taskExcel, subList)){
+                                continue;
+                            }
+                            subList.add(taskExcel);
+                            listIterator.remove();
+                            break;
+                        }
+                    }else{ //奇数正向遍历
+                        while (listIterator.hasNext()){
+                            TaskExcel taskExcel = listIterator.next();
+                            //小组中的任务编号不能重复
+                            if(isSameTaskNo(taskExcel, subList)) {
+                                continue;
+                            }else if(isExistHistoryTaskNo(taskExcel, subList)){
+                                continue;
+                            }
+                            subList.add(taskExcel);
+                            listIterator.remove();
+                            break;
+                        }
                     }
                     exportList.add(subList);
                     setHistoryTaskNoList(subList);
