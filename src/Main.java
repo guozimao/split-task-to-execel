@@ -17,6 +17,8 @@ public class Main {
     private static List<TaskExcel> taskExelList = new LinkedList<>();
     //当前记录数
     private static int counter = 1;
+    //分组的基数(默认基数为4)
+    private static int baseNum = 4;
     //经算法处理后的列表
     private static List<List<TaskExcel>> exportList = new ArrayList<>();
     //任务编号的历史列表
@@ -24,6 +26,7 @@ public class Main {
 
     public static void main(String[] args) {
         isOrNotVaild();
+        setBaseNum(args);
         getExcelData();
         doProcessTask();
         exportIO();
@@ -226,74 +229,82 @@ public class Main {
         //按分组算法逐一的匹配
         while(taskExelList.size() > 0){
             ListIterator<TaskExcel> listIterator = null;
-            if(counter == 1){
-                subList = new ArrayList<>();
-                listIterator = taskExelList.listIterator();
-                TaskExcel taskExcel = listIterator.next();
-                subList.add(taskExcel);
-                listIterator.remove();
-                counter ++;
-                //如果当前的数据就是最后一个
-                if(taskExelList.size() == 0){
-                    exportList.add(subList);
-                }
-            }else if(counter == 2){
-                listIterator = taskExelList.listIterator();
-                while (listIterator.hasNext()){
-                    listIterator.next();
-                }
-                while (listIterator.hasPrevious()){ //逆向遍历
-                    TaskExcel taskExcel = listIterator.previous();
-                    //小组中的任务编号不能重复
-                    if(isSameTaskNo(taskExcel, subList)){
-                        continue;
-                    }
-                    subList.add(taskExcel);
-                    listIterator.remove();
-                    break;
-                }
-                counter ++;
-                //如果当前的数据就是最后一个
-                if(taskExelList.size() == 0){
-                    exportList.add(subList);
-                }
-            }else if(counter == 3){
-                listIterator = taskExelList.listIterator();
-                while (listIterator.hasNext()){
+            for (int i = 1; i <= baseNum; i++){
+                if(i == 1){ //首个元素
+                    subList = new ArrayList<>();
+                    listIterator = taskExelList.listIterator();
                     TaskExcel taskExcel = listIterator.next();
-                    //小组中的任务编号不能重复
-                    if(isSameTaskNo(taskExcel, subList)) {
-                        continue;
-                    }
                     subList.add(taskExcel);
                     listIterator.remove();
-                    break;
-                }
-                counter ++;
-                //如果当前的数据就是最后一个
-                if(taskExelList.size() == 0){
+                    counter ++;
+                    //如果当前的数据就是最后一个
+                    if(taskExelList.size() == 0){
+                        exportList.add(subList);
+                        counter = 1;
+                        break;
+                    }
+                }else if(i == baseNum){ //最后一个元素
+                    listIterator = taskExelList.listIterator();
+                    while (listIterator.hasNext()){
+                        listIterator.next();
+                    }
+                    while (listIterator.hasPrevious()){ //逆向遍历
+                        TaskExcel taskExcel = listIterator.previous();
+                        //小组中的任务编号不能重复
+                        if(isSameTaskNo(taskExcel, subList)){
+                            continue;
+                        }else if(isExistHistoryTaskNo(taskExcel, subList)){
+                            continue;
+                        }
+                        subList.add(taskExcel);
+                        listIterator.remove();
+                        break;
+                    }
                     exportList.add(subList);
-                }
-            }else if(counter == 4){
-                listIterator = taskExelList.listIterator();
-                while (listIterator.hasNext()){
-                    listIterator.next();
-                }
-                while (listIterator.hasPrevious()){ //逆向遍历
-                    TaskExcel taskExcel = listIterator.previous();
-                    //小组中的任务编号不能重复
-                    if(isSameTaskNo(taskExcel, subList)){
-                        continue;
-                    }else if(isExistHistoryTaskNo(taskExcel, subList)){
-                        continue;
+                    setHistoryTaskNoList(subList);
+                    counter = 1;
+                }else if(counter % 2 == 0){ // 偶数元素
+                    listIterator = taskExelList.listIterator();
+                    while (listIterator.hasNext()){
+                        listIterator.next();
                     }
-                    subList.add(taskExcel);
-                    listIterator.remove();
-                    break;
+                    while (listIterator.hasPrevious()){ //逆向遍历
+                        TaskExcel taskExcel = listIterator.previous();
+                        //小组中的任务编号不能重复
+                        if(isSameTaskNo(taskExcel, subList)){
+                            continue;
+                        }
+                        subList.add(taskExcel);
+                        listIterator.remove();
+                        break;
+                    }
+                    counter ++;
+                    //如果当前的数据就是最后一个
+                    if(taskExelList.size() == 0){
+                        exportList.add(subList);
+                        counter = 1;
+                        break;
+                    }
+                }else { // 奇数元素
+                    listIterator = taskExelList.listIterator();
+                    while (listIterator.hasNext()){
+                        TaskExcel taskExcel = listIterator.next();
+                        //小组中的任务编号不能重复
+                        if(isSameTaskNo(taskExcel, subList)) {
+                            continue;
+                        }
+                        subList.add(taskExcel);
+                        listIterator.remove();
+                        break;
+                    }
+                    counter ++;
+                    //如果当前的数据就是最后一个
+                    if(taskExelList.size() == 0){
+                        exportList.add(subList);
+                        counter = 1;
+                        break;
+                    }
                 }
-                exportList.add(subList);
-                setHistoryTaskNoList(subList);
-                counter = 1;
             }
         }
         System.out.println("匹配数据完毕...");
@@ -304,20 +315,22 @@ public class Main {
      *
      * */
     private static boolean isExistHistoryTaskNo(TaskExcel taskExcel1, List<TaskExcel> subList) {
-        //对于小于3的小组不校验
-        if(subList.size() < 3) return false;
+        //对于小于基数-1的小组不校验
+        if(subList.size() < (baseNum - 1)) {
+            return false;
+        }
         //元素相同的个数
         int sameNum = 0;
         for(List<String> taskNOList : taskNoHistoryList){
-            for(TaskExcel taskExcel : subList){
+            for(TaskExcel taskExcel : subList){ //已经添加的元素
                 if(taskNOList.indexOf(taskExcel.getTaskNo()) > -1){
                     sameNum ++;
                 }
             }
-            if(taskNOList.indexOf(taskExcel1.getTaskNo()) > -1){
+            if(taskNOList.indexOf(taskExcel1.getTaskNo()) > -1){ //预添加的元素
                 sameNum ++;
             }
-            if(sameNum == 4){
+            if(sameNum == baseNum){
                 return true;
             }
             sameNum = 0;
@@ -326,8 +339,10 @@ public class Main {
     }
 
     private static void setHistoryTaskNoList(List<TaskExcel> subList) {
-        //对于小于4的小组不存历史
-        if(subList.size() < 4) return;
+        //对于小于基数的小组不存历史
+        if(subList.size() < baseNum) {
+            return;
+        }
         List<String> taskNoList = new ArrayList<>();
         for(TaskExcel taskExcel: subList){
             taskNoList.add(taskExcel.getTaskNo());
@@ -421,5 +436,14 @@ public class Main {
             }
         }
         System.out.println("读取excel完毕...");
+    }
+    /**
+     * 设置基数
+     *
+     * **/
+    private static void setBaseNum(String[] args){
+        if(args != null && args.length > 0){
+            Main.baseNum = Integer.valueOf(args[0]);
+        }
     }
 }
