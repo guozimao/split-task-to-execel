@@ -53,7 +53,7 @@ public class ImportExcel {
             return ImportExcel.is03Or07 ? new HSSFWorkbook(is) : new XSSFWorkbook(is);
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("-------------");
         } catch (IOException e) {
             e.printStackTrace();
         }
