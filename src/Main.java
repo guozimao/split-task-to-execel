@@ -19,7 +19,7 @@ public class Main {
     private static int counter = 1;
     //分组的基数(默认基数为4)
     private static int baseNum = 4;
-    //允许不允许重复
+    //允许不允许takeNO组的历史重复
     private static Boolean disableSameTakeNo = true;
     //经算法处理后的列表
     private static List<List<TaskExcel>> exportList = new ArrayList<>();
@@ -405,13 +405,11 @@ public class Main {
                         }
                         while (listIterator.hasPrevious()){
                             TaskExcel taskExcel = listIterator.previous();
-                            if(Main.disableSameTakeNo){
-                                //小组中的任务编号不能重复
-                                if(isSameTaskNo(taskExcel, subList)){
-                                    continue;
-                                }else if(isExistHistoryTaskNo(taskExcel, subList)){
-                                    continue;
-                                }
+                            //小组中的任务编号不能重复
+                            if(isSameTaskNo(taskExcel, subList)){
+                                continue;
+                            }else if(Main.disableSameTakeNo && isExistHistoryTaskNo(taskExcel, subList)){
+                                continue;
                             }
                             subList.add(taskExcel);
                             listIterator.remove();
@@ -420,13 +418,11 @@ public class Main {
                     }else{ //奇数正向遍历
                         while (listIterator.hasNext()){
                             TaskExcel taskExcel = listIterator.next();
-                            if(Main.disableSameTakeNo){
-                                //小组中的任务编号不能重复
-                                if(isSameTaskNo(taskExcel, subList)) {
-                                    continue;
-                                }else if(isExistHistoryTaskNo(taskExcel, subList)){
-                                    continue;
-                                }
+                            //小组中的任务编号不能重复
+                            if(isSameTaskNo(taskExcel, subList)) {
+                                continue;
+                            }else if(Main.disableSameTakeNo && isExistHistoryTaskNo(taskExcel, subList)){
+                                continue;
                             }
                             subList.add(taskExcel);
                             listIterator.remove();
@@ -443,11 +439,9 @@ public class Main {
                     }
                     while (listIterator.hasPrevious()){ //逆向遍历
                         TaskExcel taskExcel = listIterator.previous();
-                        if(Main.disableSameTakeNo){
-                            //小组中的任务编号不能重复
-                            if(isSameTaskNo(taskExcel, subList)){
-                                continue;
-                            }
+                        //小组中的任务编号不能重复
+                        if(isSameTaskNo(taskExcel, subList)){
+                            continue;
                         }
                         subList.add(taskExcel);
                         listIterator.remove();
@@ -464,11 +458,9 @@ public class Main {
                     listIterator = taskExelList.listIterator();
                     while (listIterator.hasNext()){
                         TaskExcel taskExcel = listIterator.next();
-                        if(Main.disableSameTakeNo){
-                            //小组中的任务编号不能重复
-                            if(isSameTaskNo(taskExcel, subList)) {
-                                continue;
-                            }
+                        //小组中的任务编号不能重复
+                        if(isSameTaskNo(taskExcel, subList)) {
+                            continue;
                         }
                         subList.add(taskExcel);
                         listIterator.remove();
