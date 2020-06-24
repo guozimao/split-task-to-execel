@@ -19,6 +19,8 @@ public class Main {
     private static int counter = 1;
     //分组的基数(默认基数为4)
     private static int baseNum = 4;
+    //允许不允许重复
+    private static Boolean disableSameTakeNo = true;
     //经算法处理后的列表
     private static List<List<TaskExcel>> exportList = new ArrayList<>();
     //未配对的其它列表
@@ -28,7 +30,7 @@ public class Main {
 
     public static void main(String[] args) {
         isOrNotVaild();
-        setBaseNum(args);
+        setProgameParam(args);
         getExcelData();
         doProcessTask();
         exportIO();
@@ -60,12 +62,13 @@ public class Main {
         }
 
         System.out.println("开始导出excel");
-        for (int i = 0 ; i< exportList.size(); i++){
+        for (int i = 0,count = 0 ; i< exportList.size(); i++){
             if(exportList.get(i).size() != baseNum){
                 exportList.get(i).stream().forEach( item -> otherExportList.add(item));
                 continue;
             }
-            exportMatchingExcel(i,currentDate,dateTimeFormatter);
+            exportMatchingExcel(i,count,currentDate,dateTimeFormatter);
+            count ++;
         }
         exportNoMatchingExcel(currentDate,dateTimeFormatter);
         System.out.println("导出excel结束");
@@ -213,7 +216,7 @@ public class Main {
         }
     }
 
-    private static void exportMatchingExcel(int i,LocalDate currentDate,DateTimeFormatter dateTimeFormatter) {
+    private static void exportMatchingExcel(int i,int order,LocalDate currentDate,DateTimeFormatter dateTimeFormatter) {
         String taskNoGroup = null;
         BigDecimal total = new BigDecimal(0);
         HSSFWorkbook workBook = new HSSFWorkbook();// 创建一个Excel工作薄
@@ -351,7 +354,7 @@ public class Main {
             workBook.write(os);// 将Excel写入输出流中
             byte[] fileContent = os.toByteArray();// 将输出流转换成字节数组
             os.close();
-            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + (i+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
+            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
             out.write(fileContent);
             out.close();
             workBook.close();
@@ -402,11 +405,13 @@ public class Main {
                         }
                         while (listIterator.hasPrevious()){
                             TaskExcel taskExcel = listIterator.previous();
-                            //小组中的任务编号不能重复
-                            if(isSameTaskNo(taskExcel, subList)){
-                                continue;
-                            }else if(isExistHistoryTaskNo(taskExcel, subList)){
-                                continue;
+                            if(Main.disableSameTakeNo){
+                                //小组中的任务编号不能重复
+                                if(isSameTaskNo(taskExcel, subList)){
+                                    continue;
+                                }else if(isExistHistoryTaskNo(taskExcel, subList)){
+                                    continue;
+                                }
                             }
                             subList.add(taskExcel);
                             listIterator.remove();
@@ -415,11 +420,13 @@ public class Main {
                     }else{ //奇数正向遍历
                         while (listIterator.hasNext()){
                             TaskExcel taskExcel = listIterator.next();
-                            //小组中的任务编号不能重复
-                            if(isSameTaskNo(taskExcel, subList)) {
-                                continue;
-                            }else if(isExistHistoryTaskNo(taskExcel, subList)){
-                                continue;
+                            if(Main.disableSameTakeNo){
+                                //小组中的任务编号不能重复
+                                if(isSameTaskNo(taskExcel, subList)) {
+                                    continue;
+                                }else if(isExistHistoryTaskNo(taskExcel, subList)){
+                                    continue;
+                                }
                             }
                             subList.add(taskExcel);
                             listIterator.remove();
@@ -436,9 +443,11 @@ public class Main {
                     }
                     while (listIterator.hasPrevious()){ //逆向遍历
                         TaskExcel taskExcel = listIterator.previous();
-                        //小组中的任务编号不能重复
-                        if(isSameTaskNo(taskExcel, subList)){
-                            continue;
+                        if(Main.disableSameTakeNo){
+                            //小组中的任务编号不能重复
+                            if(isSameTaskNo(taskExcel, subList)){
+                                continue;
+                            }
                         }
                         subList.add(taskExcel);
                         listIterator.remove();
@@ -455,9 +464,11 @@ public class Main {
                     listIterator = taskExelList.listIterator();
                     while (listIterator.hasNext()){
                         TaskExcel taskExcel = listIterator.next();
-                        //小组中的任务编号不能重复
-                        if(isSameTaskNo(taskExcel, subList)) {
-                            continue;
+                        if(Main.disableSameTakeNo){
+                            //小组中的任务编号不能重复
+                            if(isSameTaskNo(taskExcel, subList)) {
+                                continue;
+                            }
                         }
                         subList.add(taskExcel);
                         listIterator.remove();
@@ -624,12 +635,17 @@ public class Main {
         }
     }
     /**
-     * 设置基数
+     * 设置程序参数
      *
      * **/
-    private static void setBaseNum(String[] args){
+    private static void setProgameParam(String[] args){
+        //设置分组基数
         if(args != null && args.length > 0){
             Main.baseNum = Integer.valueOf(args[0]);
+        }
+        //设置分组成员允不允许重复
+        if(args != null && args.length > 1){
+            Main.disableSameTakeNo = Boolean.valueOf(args[1]);
         }
     }
 }
