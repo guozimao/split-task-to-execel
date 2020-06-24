@@ -53,6 +53,7 @@ public class Main {
         //获取当前时间
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        int order = 0;
 
         //创建文件目录
         String directory = "D:\\work-space\\" + currentDate.format(dateTimeFormatter);
@@ -62,24 +63,29 @@ public class Main {
         }
 
         System.out.println("开始导出excel");
-        for (int i = 0,count = 0 ; i< exportList.size(); i++){
+        // 匹配的组导出excel
+        for (int i = 0; i< exportList.size(); i++){
             if(exportList.get(i).size() != baseNum){
                 exportList.get(i).stream().forEach( item -> otherExportList.add(item));
                 continue;
             }
-            exportMatchingExcel(i,count,currentDate,dateTimeFormatter);
-            count ++;
+            exportMatchingExcel(i,order,currentDate,dateTimeFormatter);
+            order ++;
         }
-        exportNoMatchingExcel(currentDate,dateTimeFormatter);
+        // 未匹配的组导出excel
+        for (int i = 0; i< otherExportList.size(); i++){
+            exportNoMatchingExcel(i,order,currentDate,dateTimeFormatter);
+            order ++;
+        }
+
         System.out.println("导出excel结束");
 
     }
 
-    private static void exportNoMatchingExcel(LocalDate currentDate,DateTimeFormatter dateTimeFormatter) {
+    private static void exportNoMatchingExcel(int i, int order,LocalDate currentDate,DateTimeFormatter dateTimeFormatter) {
 
-        if(otherExportList.size() == 0){
-            return;
-        }
+        String taskNoGroup = otherExportList.get(i).getTaskNo();
+        BigDecimal total =  otherExportList.get(i).getPrice();
 
         HSSFWorkbook workBook = new HSSFWorkbook();// 创建一个Excel工作薄
         HSSFSheet sheet = workBook.createSheet("sheet1");
@@ -154,60 +160,59 @@ public class Main {
         contentStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         contentStyle.setFont(bodyFont);
 
-        for (int i = 0; i < otherExportList.size(); i++){
-            HSSFRow row = sheet.createRow(i + 1);
 
-            row.setHeight((short) 3219);
-            HSSFCell hssfCell0 = row.createCell(0);
-            hssfCell0.setCellValue(otherExportList.get(i).getTaskNo());
-            hssfCell0.setCellStyle(contentStyle4TaskNo);
+        HSSFRow row = sheet.createRow(i + 1);
 
-            HSSFCell hssfCell1 = row.createCell(1);
-            hssfCell1.setCellValue(otherExportList.get(i).getDate());
-            hssfCell1.setCellStyle(dateStyle);
+        row.setHeight((short) 3219);
+        HSSFCell hssfCell0 = row.createCell(0);
+        hssfCell0.setCellValue(otherExportList.get(i).getTaskNo());
+        hssfCell0.setCellStyle(contentStyle4TaskNo);
 
-            HSSFCell hssfCell3 = row.createCell(3);
-            hssfCell3.setCellValue(otherExportList.get(i).getStoreName());
-            hssfCell3.setCellStyle(contentStyle);
+        HSSFCell hssfCell1 = row.createCell(1);
+        hssfCell1.setCellValue(otherExportList.get(i).getDate());
+        hssfCell1.setCellStyle(dateStyle);
 
-            HSSFCell hssfCell4 = row.createCell(4);
-            hssfCell4.setCellValue(otherExportList.get(i).getPrice().doubleValue());
-            hssfCell4.setCellStyle(contentStyle);
+        HSSFCell hssfCell3 = row.createCell(3);
+        hssfCell3.setCellValue(otherExportList.get(i).getStoreName());
+        hssfCell3.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell5 = row.createCell(5);
-            hssfCell5.setCellValue(otherExportList.get(i).getNote());
-            hssfCell5.setCellStyle(contentStyle4Note);
+        HSSFCell hssfCell4 = row.createCell(4);
+        hssfCell4.setCellValue(otherExportList.get(i).getPrice().doubleValue());
+        hssfCell4.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell6 = row.createCell(6);
-            hssfCell6.setCellValue(otherExportList.get(i).getSpecialNote());
-            hssfCell6.setCellStyle(contentStyle4Note);
+        HSSFCell hssfCell5 = row.createCell(5);
+        hssfCell5.setCellValue(otherExportList.get(i).getNote());
+        hssfCell5.setCellStyle(contentStyle4Note);
 
-            HSSFCell hssfCell7 = row.createCell(7);
-            hssfCell7.setCellValue(otherExportList.get(i).getKeyWord1());
-            hssfCell7.setCellStyle(contentStyle);
+        HSSFCell hssfCell6 = row.createCell(6);
+        hssfCell6.setCellValue(otherExportList.get(i).getSpecialNote());
+        hssfCell6.setCellStyle(contentStyle4Note);
 
-            HSSFCell hssfCell8 = row.createCell(8);
-            hssfCell8.setCellValue(otherExportList.get(i).getKeyWord2());
-            hssfCell8.setCellStyle(contentStyle);
+        HSSFCell hssfCell7 = row.createCell(7);
+        hssfCell7.setCellValue(otherExportList.get(i).getKeyWord1());
+        hssfCell7.setCellStyle(contentStyle);
 
-            if(otherExportList.get(i).getMyPicture() != null){
-                //图片处理
-                HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0,
-                        (short) 2, i + 1, (short) 3, i + 2);
-                MyPicture myPicture = otherExportList.get(i).getMyPicture();
-                myPicture.setClientAnchor(anchor);
+        HSSFCell hssfCell8 = row.createCell(8);
+        hssfCell8.setCellValue(otherExportList.get(i).getKeyWord2());
+        hssfCell8.setCellStyle(contentStyle);
 
-                // 插入图片
-                patriarch.createPicture(anchor, workBook.addPicture(myPicture.getPictureData().getData(), HSSFWorkbook.PICTURE_TYPE_JPEG));
-            }
+        if(otherExportList.get(i).getMyPicture() != null){
+            //图片处理
+            HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0,
+                    (short) 2,  1, (short) 3,  2);
+            MyPicture myPicture = otherExportList.get(i).getMyPicture();
+            myPicture.setClientAnchor(anchor);
 
+            // 插入图片
+            patriarch.createPicture(anchor, workBook.addPicture(myPicture.getPictureData().getData(), HSSFWorkbook.PICTURE_TYPE_JPEG));
         }
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();// 将Excel文件存在输出流中
         try {
             workBook.write(os);// 将Excel写入输出流中
             byte[] fileContent = os.toByteArray();// 将输出流转换成字节数组
             os.close();
-            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + "index.xls");
+            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
             out.write(fileContent);
             out.close();
             workBook.close();
