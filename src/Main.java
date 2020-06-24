@@ -19,8 +19,8 @@ public class Main {
     private static int counter = 1;
     //分组的基数(默认基数为4)
     private static int baseNum = 4;
-    //允许不允许takeNO组的历史重复
-    private static Boolean disableSameTakeNo = true;
+    //允许不允许takeNo组的历史重复
+    private static Boolean disableHistoryTakeNo = true;
     //经算法处理后的列表
     private static List<List<TaskExcel>> exportList = new ArrayList<>();
     //未配对的其它列表
@@ -408,7 +408,7 @@ public class Main {
                             //小组中的任务编号不能重复
                             if(isSameTaskNo(taskExcel, subList)){
                                 continue;
-                            }else if(Main.disableSameTakeNo && isExistHistoryTaskNo(taskExcel, subList)){
+                            }else if(Main.disableHistoryTakeNo && isExistHistoryTaskNo(taskExcel, subList)){
                                 continue;
                             }
                             subList.add(taskExcel);
@@ -421,7 +421,7 @@ public class Main {
                             //小组中的任务编号不能重复
                             if(isSameTaskNo(taskExcel, subList)) {
                                 continue;
-                            }else if(Main.disableSameTakeNo && isExistHistoryTaskNo(taskExcel, subList)){
+                            }else if(Main.disableHistoryTakeNo && isExistHistoryTaskNo(taskExcel, subList)){
                                 continue;
                             }
                             subList.add(taskExcel);
@@ -637,7 +637,7 @@ public class Main {
         }
         //设置分组成员允不允许重复
         if(args != null && args.length > 1){
-            Main.disableSameTakeNo = Boolean.valueOf(args[1]);
+            Main.disableHistoryTakeNo = Boolean.valueOf(args[1]);
         }
     }
 }
