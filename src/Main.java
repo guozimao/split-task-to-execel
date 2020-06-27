@@ -65,9 +65,18 @@ public class Main {
         System.out.println("开始导出excel");
         // 匹配的组导出excel
         for (int i = 0; i< exportList.size(); i++){
-            if(exportList.get(i).size() != baseNum){
-                exportList.get(i).stream().forEach( item -> otherExportList.add(item));
-                continue;
+            if(disableHistoryTakeNo){
+                //在不重复算法的情况下，除了匹配数为baseNum，其它都是未匹配的组
+                if(exportList.get(i).size() != baseNum){
+                    exportList.get(i).stream().forEach( item -> otherExportList.add(item));
+                    continue;
+                }
+            }else{
+                //在重复算法的情况下，只有匹配数为1的，算是匹配的组
+                if(exportList.get(i).size() == 1){
+                    exportList.get(i).stream().forEach( item -> otherExportList.add(item));
+                    continue;
+                }
             }
             exportMatchingExcel(i,order,currentDate,dateTimeFormatter);
             order ++;
