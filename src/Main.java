@@ -72,7 +72,7 @@ public class Main {
                     continue;
                 }
             }else{
-                //在重复算法的情况下，只有匹配数为1的，算是匹配的组
+                //在重复算法的情况下，只有匹配数为1的，算是未匹配的组
                 if(exportList.get(i).size() == 1){
                     exportList.get(i).stream().forEach( item -> otherExportList.add(item));
                     continue;
