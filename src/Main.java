@@ -21,6 +21,8 @@ public class Main {
     private static int baseNum = 4;
     //允许不允许takeNo组的历史重复
     private static Boolean disableHistoryTakeNo = true;
+    //是否禁用对于未匹配进行合成文件
+    private static Boolean disableCompositeFile4UnmatchedData = true;
     //经算法处理后的列表
     private static List<List<TaskExcel>> exportList = new ArrayList<>();
     //未配对的其它列表
@@ -56,7 +58,12 @@ public class Main {
         int order = 0;
 
         //创建文件目录
-        String directory = "D:\\work-space\\" + currentDate.format(dateTimeFormatter);
+        String directory = null;
+        if(Main.disableCompositeFile4UnmatchedData){
+            directory = "D:\\work-space\\" + currentDate.format(dateTimeFormatter);
+        }else{
+            directory = "D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\data";
+        }
         File file = new File(directory);
         if (!file.exists()) {
             file.mkdirs();
@@ -82,26 +89,28 @@ public class Main {
             order ++;
         }
         // 未匹配的组导出excel
-        for (int i = 0; i< otherExportList.size(); i++){
-            exportNoMatchingExcel(i,order,currentDate,dateTimeFormatter);
-            order ++;
+        if(Main.disableCompositeFile4UnmatchedData){
+            for (int i = 0; i< otherExportList.size(); i++){
+                exportNoMatchingExcel(i,order,currentDate,dateTimeFormatter);
+                order ++;
+            }
+        }else {
+            compositeFile4NoMatching2Excel(otherExportList,currentDate,dateTimeFormatter);
         }
+
 
         System.out.println("导出excel结束");
 
     }
 
-    private static void exportNoMatchingExcel(int i, int order,LocalDate currentDate,DateTimeFormatter dateTimeFormatter) {
-
-        String taskNoGroup = otherExportList.get(i).getTaskNo();
-        BigDecimal total =  otherExportList.get(i).getPrice();
-
-        HSSFWorkbook workBook = new HSSFWorkbook();// 创建一个Excel工作薄
+    private static void compositeFile4NoMatching2Excel(List<TaskExcel> otherExportList,LocalDate currentDate, DateTimeFormatter dateTimeFormatter) {
+        // 创建一个Excel工作薄
+        HSSFWorkbook workBook = new HSSFWorkbook();
         HSSFSheet sheet = workBook.createSheet("sheet1");
 
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
-
-        HSSFRow headerRow = sheet.createRow(0);// 创建首行，并赋值
+        // 创建首行，并赋值
+        HSSFRow headerRow = sheet.createRow(0);
         HSSFFont headFont = workBook.createFont();
         headFont.setFontName("仿宋_GB2312");
         headFont.setFontHeightInPoints((short) 14);
@@ -110,8 +119,8 @@ public class Main {
         headerStyle.setFont(headFont);
         headerStyle.setAlignment(HorizontalAlignment.CENTER);
         headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-
-        for (int k = 0; k < ImportExcel.EXCEL_HEADER.length; k++) {//给首行赋值
+        //给首行赋值
+        for (int k = 0; k < ImportExcel.EXCEL_HEADER.length; k++) {
             HSSFCell headerCell = headerRow.createCell(k);
             headerCell.setCellValue(ImportExcel.EXCEL_HEADER[k]);
             headerCell.setCellStyle(headerStyle);
@@ -133,10 +142,160 @@ public class Main {
         contentStyle4TaskNo.setVerticalAlignment(VerticalAlignment.CENTER);
         contentStyle4TaskNo.setFillForegroundColor(IndexedColors.RED.getIndex());
         contentStyle4TaskNo.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        contentStyle4TaskNo.setBorderBottom(BorderStyle.DOUBLE); //底部边框
-        contentStyle4TaskNo.setBottomBorderColor(IndexedColors.YELLOW.getIndex());//底部边框颜色
-        contentStyle4TaskNo.setBorderLeft(BorderStyle.DOUBLE); //左边框
-        contentStyle4TaskNo.setLeftBorderColor(IndexedColors.YELLOW.getIndex());//左边框颜色
+        //底部边框
+        contentStyle4TaskNo.setBorderBottom(BorderStyle.DOUBLE);
+        //底部边框颜色
+        contentStyle4TaskNo.setBottomBorderColor(IndexedColors.YELLOW.getIndex());
+        //左边框
+        contentStyle4TaskNo.setBorderLeft(BorderStyle.DOUBLE);
+        //左边框颜色
+        contentStyle4TaskNo.setLeftBorderColor(IndexedColors.YELLOW.getIndex());
+        contentStyle4TaskNo.setBorderRight(BorderStyle.DOUBLE);
+        contentStyle4TaskNo.setRightBorderColor(IndexedColors.YELLOW.getIndex());
+        contentStyle4TaskNo.setBorderTop(BorderStyle.DOUBLE);
+        contentStyle4TaskNo.setRightBorderColor(IndexedColors.YELLOW.getIndex());
+        contentStyle4TaskNo.setFont(bodyFont);
+
+        //备注样式
+        HSSFCellStyle contentStyle4Note =   workBook.createCellStyle();
+        contentStyle4Note.setAlignment(HorizontalAlignment.CENTER);
+        contentStyle4Note.setVerticalAlignment(VerticalAlignment.CENTER);
+        contentStyle4Note.setWrapText(true);
+        HSSFFont noteFont = workBook.createFont();
+        noteFont.setBold(true);
+        noteFont.setFontHeightInPoints((short) 12);
+        noteFont.setColor(IndexedColors.RED.getIndex());
+        contentStyle4Note.setFont(noteFont);
+
+        //日期单元样式
+        HSSFCellStyle dateStyle =   workBook.createCellStyle();
+        HSSFCreationHelper createHelper = workBook.getCreationHelper();
+        dateStyle.setWrapText(true);
+        dateStyle.setAlignment(HorizontalAlignment.CENTER);
+        dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy/m/d"));
+
+        //默认的输出单元样式
+        HSSFCellStyle contentStyle =   workBook.createCellStyle();
+        contentStyle.setWrapText(true);
+        contentStyle.setAlignment(HorizontalAlignment.CENTER);
+        contentStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        contentStyle.setFont(bodyFont);
+
+        for(int i=0;i < otherExportList.size(); i++){
+            HSSFRow row = sheet.createRow(i + 1);
+
+            row.setHeight((short) 3219);
+            HSSFCell hssfCell0 = row.createCell(0);
+            hssfCell0.setCellValue(otherExportList.get(i).getTaskNo());
+            hssfCell0.setCellStyle(contentStyle4TaskNo);
+
+            HSSFCell hssfCell1 = row.createCell(1);
+            hssfCell1.setCellValue(otherExportList.get(i).getDate());
+            hssfCell1.setCellStyle(dateStyle);
+
+            HSSFCell hssfCell3 = row.createCell(3);
+            hssfCell3.setCellValue(otherExportList.get(i).getStoreName());
+            hssfCell3.setCellStyle(contentStyle);
+
+            HSSFCell hssfCell4 = row.createCell(4);
+            hssfCell4.setCellValue(otherExportList.get(i).getPrice().doubleValue());
+            hssfCell4.setCellStyle(contentStyle);
+
+            HSSFCell hssfCell5 = row.createCell(5);
+            hssfCell5.setCellValue(otherExportList.get(i).getNote());
+            hssfCell5.setCellStyle(contentStyle4Note);
+
+            HSSFCell hssfCell6 = row.createCell(6);
+            hssfCell6.setCellValue(otherExportList.get(i).getSpecialNote());
+            hssfCell6.setCellStyle(contentStyle4Note);
+
+            HSSFCell hssfCell7 = row.createCell(7);
+            hssfCell7.setCellValue(otherExportList.get(i).getKeyWord1());
+            hssfCell7.setCellStyle(contentStyle);
+
+            HSSFCell hssfCell8 = row.createCell(8);
+            hssfCell8.setCellValue(otherExportList.get(i).getKeyWord2());
+            hssfCell8.setCellStyle(contentStyle);
+
+            if(otherExportList.get(i).getMyPicture() != null){
+                //图片处理
+                HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0,
+                        (short) 2,  i+1, (short) 3,  i+2);
+                MyPicture myPicture = otherExportList.get(i).getMyPicture();
+                myPicture.setClientAnchor(anchor);
+
+                // 插入图片
+                patriarch.createPicture(anchor, workBook.addPicture(myPicture.getPictureData().getData(), HSSFWorkbook.PICTURE_TYPE_JPEG));
+            }
+        }
+        // 将Excel文件存在输出流中
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            // 将Excel写入输出流中
+            workBook.write(os);
+            // 将输出流转换成字节数组
+            byte[] fileContent = os.toByteArray();
+            os.close();
+            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\index.xls");
+            out.write(fileContent);
+            out.close();
+            workBook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void exportNoMatchingExcel(int i, int order,LocalDate currentDate,DateTimeFormatter dateTimeFormatter) {
+
+        String taskNoGroup = otherExportList.get(i).getTaskNo();
+        BigDecimal total =  otherExportList.get(i).getPrice();
+        // 创建一个Excel工作薄
+        HSSFWorkbook workBook = new HSSFWorkbook();
+        HSSFSheet sheet = workBook.createSheet("sheet1");
+
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+        // 创建首行，并赋值
+        HSSFRow headerRow = sheet.createRow(0);
+        HSSFFont headFont = workBook.createFont();
+        headFont.setFontName("仿宋_GB2312");
+        headFont.setFontHeightInPoints((short) 14);
+        headFont.setBold(true);
+        HSSFCellStyle headerStyle = workBook.createCellStyle();
+        headerStyle.setFont(headFont);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+        headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        //给首行赋值
+        for (int k = 0; k < ImportExcel.EXCEL_HEADER.length; k++) {
+            HSSFCell headerCell = headerRow.createCell(k);
+            headerCell.setCellValue(ImportExcel.EXCEL_HEADER[k]);
+            headerCell.setCellStyle(headerStyle);
+            if(ImportExcel.EXCEL_HEADER[k].equals("主图") || ImportExcel.EXCEL_HEADER[k].equals("店铺名称（非掌柜名）")){
+                sheet.setColumnWidth(k, 255 * 30);
+            } else {
+                sheet.setColumnWidth(k, 255 * 15);
+            }
+        }
+
+        HSSFFont bodyFont = workBook.createFont();
+        bodyFont.setFontName("仿宋_GB2312");
+        bodyFont.setFontHeightInPoints((short) 12);
+        bodyFont.setBold(true);
+
+        //任务编号单元的样式
+        HSSFCellStyle contentStyle4TaskNo =   workBook.createCellStyle();
+        contentStyle4TaskNo.setAlignment(HorizontalAlignment.CENTER);
+        contentStyle4TaskNo.setVerticalAlignment(VerticalAlignment.CENTER);
+        contentStyle4TaskNo.setFillForegroundColor(IndexedColors.RED.getIndex());
+        contentStyle4TaskNo.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        //底部边框
+        contentStyle4TaskNo.setBorderBottom(BorderStyle.DOUBLE);
+        //底部边框颜色
+        contentStyle4TaskNo.setBottomBorderColor(IndexedColors.YELLOW.getIndex());
+        //左边框
+        contentStyle4TaskNo.setBorderLeft(BorderStyle.DOUBLE);
+        //左边框颜色
+        contentStyle4TaskNo.setLeftBorderColor(IndexedColors.YELLOW.getIndex());
         contentStyle4TaskNo.setBorderRight(BorderStyle.DOUBLE);
         contentStyle4TaskNo.setRightBorderColor(IndexedColors.YELLOW.getIndex());
         contentStyle4TaskNo.setBorderTop(BorderStyle.DOUBLE);
@@ -215,11 +374,13 @@ public class Main {
             // 插入图片
             patriarch.createPicture(anchor, workBook.addPicture(myPicture.getPictureData().getData(), HSSFWorkbook.PICTURE_TYPE_JPEG));
         }
-
-        ByteArrayOutputStream os = new ByteArrayOutputStream();// 将Excel文件存在输出流中
+        // 将Excel文件存在输出流中
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            workBook.write(os);// 将Excel写入输出流中
-            byte[] fileContent = os.toByteArray();// 将输出流转换成字节数组
+            // 将Excel写入输出流中
+            workBook.write(os);
+            // 将输出流转换成字节数组
+            byte[] fileContent = os.toByteArray();
             os.close();
             OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
             out.write(fileContent);
@@ -233,12 +394,14 @@ public class Main {
     private static void exportMatchingExcel(int i,int order,LocalDate currentDate,DateTimeFormatter dateTimeFormatter) {
         String taskNoGroup = null;
         BigDecimal total = new BigDecimal(0);
-        HSSFWorkbook workBook = new HSSFWorkbook();// 创建一个Excel工作薄
+        // 创建一个Excel工作薄
+        HSSFWorkbook workBook = new HSSFWorkbook();
         HSSFSheet sheet = workBook.createSheet("sheet1");
 
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-        HSSFRow headerRow = sheet.createRow(0);// 创建首行，并赋值
+        // 创建首行，并赋值
+        HSSFRow headerRow = sheet.createRow(0);
         HSSFFont headFont = workBook.createFont();
         headFont.setFontName("仿宋_GB2312");
         headFont.setFontHeightInPoints((short) 14);
@@ -247,8 +410,8 @@ public class Main {
         headerStyle.setFont(headFont);
         headerStyle.setAlignment(HorizontalAlignment.CENTER);
         headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-
-        for (int k = 0; k < ImportExcel.EXCEL_HEADER.length; k++) {//给首行赋值
+        //给首行赋值
+        for (int k = 0; k < ImportExcel.EXCEL_HEADER.length; k++) {
             HSSFCell headerCell = headerRow.createCell(k);
             headerCell.setCellValue(ImportExcel.EXCEL_HEADER[k]);
             headerCell.setCellStyle(headerStyle);
@@ -270,10 +433,14 @@ public class Main {
         contentStyle4TaskNo.setVerticalAlignment(VerticalAlignment.CENTER);
         contentStyle4TaskNo.setFillForegroundColor(IndexedColors.RED.getIndex());
         contentStyle4TaskNo.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        contentStyle4TaskNo.setBorderBottom(BorderStyle.DOUBLE); //底部边框
-        contentStyle4TaskNo.setBottomBorderColor(IndexedColors.YELLOW.getIndex());//底部边框颜色
-        contentStyle4TaskNo.setBorderLeft(BorderStyle.DOUBLE); //左边框
-        contentStyle4TaskNo.setLeftBorderColor(IndexedColors.YELLOW.getIndex());//左边框颜色
+        //底部边框
+        contentStyle4TaskNo.setBorderBottom(BorderStyle.DOUBLE);
+        //底部边框颜色
+        contentStyle4TaskNo.setBottomBorderColor(IndexedColors.YELLOW.getIndex());
+        //左边框
+        contentStyle4TaskNo.setBorderLeft(BorderStyle.DOUBLE);
+        //左边框颜色
+        contentStyle4TaskNo.setLeftBorderColor(IndexedColors.YELLOW.getIndex());
         contentStyle4TaskNo.setBorderRight(BorderStyle.DOUBLE);
         contentStyle4TaskNo.setRightBorderColor(IndexedColors.YELLOW.getIndex());
         contentStyle4TaskNo.setBorderTop(BorderStyle.DOUBLE);
@@ -363,12 +530,20 @@ public class Main {
             total = total.add(exportList.get(i).get(j).getPrice());
 
         }
-        ByteArrayOutputStream os = new ByteArrayOutputStream();// 将Excel文件存在输出流中
+        // 将Excel文件存在输出流中
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            workBook.write(os);// 将Excel写入输出流中
-            byte[] fileContent = os.toByteArray();// 将输出流转换成字节数组
+            // 将Excel写入输出流中
+            workBook.write(os);
+            // 将输出流转换成字节数组
+            byte[] fileContent = os.toByteArray();
             os.close();
-            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
+            OutputStream out = null;
+            if(Main.disableCompositeFile4UnmatchedData){
+                out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
+            }else {
+                out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\data\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
+            }
             out.write(fileContent);
             out.close();
             workBook.close();
@@ -398,7 +573,8 @@ public class Main {
         while(taskExelList.size() > 0){
             ListIterator<TaskExcel> listIterator = null;
             for (int i = 1; i <= baseNum; i++){
-                if(i == 1){ //首个元素
+                //首个元素
+                if(i == 1){
                     subList = new ArrayList<>();
                     listIterator = taskExelList.listIterator();
                     TaskExcel taskExcel = listIterator.next();
@@ -411,9 +587,11 @@ public class Main {
                         counter = 1;
                         break;
                     }
-                }else if(i == baseNum){ //最后一个元素
+                    //最后一个元素
+                }else if(i == baseNum){
                     listIterator = taskExelList.listIterator();
-                    if(baseNum % 2 == 0){ //偶数逆向遍历
+                    //偶数逆向遍历
+                    if(baseNum % 2 == 0){
                         while (listIterator.hasNext()){
                             listIterator.next();
                         }
@@ -446,12 +624,14 @@ public class Main {
                     exportList.add(subList);
                     setHistoryTaskNoList(subList);
                     counter = 1;
-                }else if(counter % 2 == 0){ // 偶数元素
+                    // 偶数元素
+                }else if(counter % 2 == 0){
                     listIterator = taskExelList.listIterator();
                     while (listIterator.hasNext()){
                         listIterator.next();
                     }
-                    while (listIterator.hasPrevious()){ //逆向遍历
+                    //逆向遍历
+                    while (listIterator.hasPrevious()){
                         TaskExcel taskExcel = listIterator.previous();
                         //小组中的任务编号不能重复
                         if(isSameTaskNo(taskExcel, subList)){
@@ -505,12 +685,14 @@ public class Main {
         //元素相同的个数
         int sameNum = 0;
         for(List<String> taskNOList : taskNoHistoryList){
-            for(TaskExcel taskExcel : subList){ //已经添加的元素
+            //已经添加的元素
+            for(TaskExcel taskExcel : subList){
                 if(taskNOList.indexOf(taskExcel.getTaskNo()) > -1){
                     sameNum ++;
                 }
             }
-            if(taskNOList.indexOf(taskExcel1.getTaskNo()) > -1){ //预添加的元素
+            //预添加的元素
+            if(taskNOList.indexOf(taskExcel1.getTaskNo()) > -1){
                 sameNum ++;
             }
             if(sameNum == baseNum){
@@ -652,6 +834,10 @@ public class Main {
         //设置分组成员允不允许重复
         if(args != null && args.length > 1){
             Main.disableHistoryTakeNo = Boolean.valueOf(args[1]);
+        }
+        //设置对于未匹配进行合成文件
+        if(args != null && args.length > 2){
+            Main.disableCompositeFile4UnmatchedData = Boolean.valueOf(args[2]);
         }
     }
 }
