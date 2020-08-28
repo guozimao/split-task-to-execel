@@ -23,6 +23,8 @@ public class Main {
     private static Boolean disableHistoryTakeNo = true;
     //是否禁用对于未匹配进行合成文件
     private static Boolean disableCompositeFile4UnmatchedData = true;
+    //是否禁用未匹配
+    private static Boolean disableNoMatchedMod = true;
     //经算法处理后的列表
     private static List<List<TaskExcel>> exportList = new ArrayList<>();
     //未配对的其它列表
@@ -72,32 +74,35 @@ public class Main {
         System.out.println("开始导出excel");
         // 匹配的组导出excel
         for (int i = 0; i< exportList.size(); i++){
-            if(disableHistoryTakeNo){
-                //在不重复算法的情况下，除了匹配数为baseNum，其它都是未匹配的组
-                if(exportList.get(i).size() != baseNum){
-                    exportList.get(i).stream().forEach( item -> otherExportList.add(item));
-                    continue;
-                }
-            }else{
-                //在重复算法的情况下，只有匹配数为1的，算是未匹配的组
-                if(exportList.get(i).size() == 1){
-                    exportList.get(i).stream().forEach( item -> otherExportList.add(item));
-                    continue;
+            if(Main.disableNoMatchedMod){
+                if(disableHistoryTakeNo){
+                    //在不重复算法的情况下，除了匹配数为baseNum，其它都是未匹配的组
+                    if(exportList.get(i).size() != baseNum){
+                        exportList.get(i).stream().forEach( item -> otherExportList.add(item));
+                        continue;
+                    }
+                }else{
+                    //在重复算法的情况下，只有匹配数为1的，算是未匹配的组
+                    if(exportList.get(i).size() == 1){
+                        exportList.get(i).stream().forEach( item -> otherExportList.add(item));
+                        continue;
+                    }
                 }
             }
             exportMatchingExcel(i,order,currentDate,dateTimeFormatter);
             order ++;
         }
         // 未匹配的组导出excel
-        if(Main.disableCompositeFile4UnmatchedData){
-            for (int i = 0; i< otherExportList.size(); i++){
-                exportNoMatchingExcel(i,order,currentDate,dateTimeFormatter);
-                order ++;
+        if(Main.disableNoMatchedMod){
+            if(Main.disableCompositeFile4UnmatchedData){
+                for (int i = 0; i< otherExportList.size(); i++){
+                    exportNoMatchingExcel(i,order,currentDate,dateTimeFormatter);
+                    order ++;
+                }
+            }else {
+                compositeFile4NoMatching2Excel(otherExportList,currentDate,dateTimeFormatter);
             }
-        }else {
-            compositeFile4NoMatching2Excel(otherExportList,currentDate,dateTimeFormatter);
         }
-
 
         System.out.println("导出excel结束");
 
@@ -838,6 +843,10 @@ public class Main {
         //设置对于未匹配进行合成文件
         if(args != null && args.length > 2){
             Main.disableCompositeFile4UnmatchedData = Boolean.valueOf(args[2]);
+        }
+        //设置要不要未匹配
+        if(args != null && args.length > 3){
+            Main.disableCompositeFile4UnmatchedData = Boolean.valueOf(args[3]);
         }
     }
 }
