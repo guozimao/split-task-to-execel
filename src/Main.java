@@ -1,5 +1,12 @@
 import beans.MyPicture;
+import beans.SortCount;
 import beans.TaskExcel;
+import org.apache.commons.collections4.Bag;
+
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.bag.HashBag;
+
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -24,7 +31,11 @@ public class Main {
     //是否禁用对于未匹配进行合成文件
     private static Boolean disableCompositeFile4UnmatchedData = true;
     //是否禁用未匹配
-    private static Boolean disableNoMatchedMod = true;
+    private static Boolean enableNoMatchedMod = true;
+    //选择算法
+    private static Integer algorithmIndex = 0;
+    //算法
+    private static List<String> algorithm = Arrays.asList(new String[]{"mostBalanceMoney","mostMatching"});
     //经算法处理后的列表
     private static List<List<TaskExcel>> exportList = new ArrayList<>();
     //未配对的其它列表
@@ -74,7 +85,7 @@ public class Main {
         System.out.println("开始导出excel");
         // 匹配的组导出excel
         for (int i = 0; i< exportList.size(); i++){
-            if(Main.disableNoMatchedMod){
+            if(Main.enableNoMatchedMod){
                 if(disableHistoryTakeNo){
                     //在不重复算法的情况下，除了匹配数为baseNum，其它都是未匹配的组
                     if(exportList.get(i).size() != baseNum){
@@ -93,7 +104,7 @@ public class Main {
             order ++;
         }
         // 未匹配的组导出excel
-        if(Main.disableNoMatchedMod){
+        if(Main.enableNoMatchedMod){
             if(Main.disableCompositeFile4UnmatchedData){
                 for (int i = 0; i< otherExportList.size(); i++){
                     exportNoMatchingExcel(i,order,currentDate,dateTimeFormatter);
@@ -562,6 +573,117 @@ public class Main {
      *
      * **/
     private static void doProcessTask() {
+        if(algorithm.indexOf("mostBalanceMoney") == Main.algorithmIndex){
+            mostBalanceMoneyAlgorithm();
+        }else if(algorithm.indexOf("mostMatching") == Main.algorithmIndex){
+            mostMatchingAlgorithm();
+        }else {
+            System.out.println("没选择算法");
+            System.exit(0);
+        }
+    }
+
+    private static void mostMatchingAlgorithm() {
+        //存放小组的容器
+        List<TaskExcel> subList = null;
+        System.out.println("正在匹配并分组数据中...");
+        sortTaskExelList4MostMatchingAlgorithm();
+        //按分组算法逐一的匹配
+        while(taskExelList.size() > 0){
+            ListIterator<TaskExcel> listIterator = null;
+            for (int i = 1; i <= baseNum; i++){
+                //首个元素
+                if(i == 1){
+                    subList = new ArrayList<>();
+                    listIterator = taskExelList.listIterator();
+                    TaskExcel taskExcel = listIterator.next();
+                    subList.add(taskExcel);
+                    listIterator.remove();
+                    //如果当前的数据就是最后一个
+                    if(taskExelList.size() == 0){
+                        exportList.add(subList);
+                        break;
+                    }
+                    //最后一个元素
+                }else if(i == baseNum){
+                    listIterator = taskExelList.listIterator();
+                    while (listIterator.hasNext()){
+                        TaskExcel taskExcel = listIterator.next();
+                        //小组中的任务编号不能重复
+                        if(isSameTaskNo(taskExcel, subList)) {
+                            continue;
+                        }else if(Main.disableHistoryTakeNo && isExistHistoryTaskNo(taskExcel, subList)){
+                            continue;
+                        }
+                        subList.add(taskExcel);
+                        listIterator.remove();
+                        break;
+                    }
+                    exportList.add(subList);
+                    setHistoryTaskNoList(subList);
+                }else {
+                    listIterator = taskExelList.listIterator();
+                    while (listIterator.hasNext()){
+                        TaskExcel taskExcel = listIterator.next();
+                        //小组中的任务编号不能重复
+                        if(isSameTaskNo(taskExcel, subList)) {
+                            continue;
+                        }
+                        subList.add(taskExcel);
+                        listIterator.remove();
+                        break;
+                    }
+                    counter ++;
+                    //如果当前的数据就是最后一个
+                    if(taskExelList.size() == 0){
+                        exportList.add(subList);
+                        break;
+                    }
+                }
+            }
+        }
+        System.out.println("匹配数据完毕...");
+    }
+
+    private static void sortTaskExelList4MostMatchingAlgorithm() {
+        MultiValuedMap<String, TaskExcel> taskMap = new ArrayListValuedHashMap<>();
+        Bag<String> taskBag = new HashBag<>();
+        for(TaskExcel taskExcel : taskExelList){
+            taskMap.put(taskExcel.getTaskNo(),taskExcel);
+            taskBag.add(taskExcel.getTaskNo());
+        }
+        List<SortCount> sortingList = new ArrayList<>();
+        for(String bag: taskBag.uniqueSet()){
+            SortCount count = new SortCount();
+            count.setCount(taskBag.getCount(bag));
+            count.setTaskExcelList((List<TaskExcel>) taskMap.get(bag));
+            sortingList.add(count);
+        }
+        //排序
+        Collections.sort(sortingList, new Comparator<SortCount>() {
+            @Override
+            public int compare(SortCount o1, SortCount o2) {
+                Integer count1 = o1.getCount();
+                Integer count2 = o2.getCount();
+                if(count1 == count2){
+                    return 0;
+                }else if(count1 > count2){
+                    return -1;
+                }else {
+                    return 1;
+                }
+            }
+        });
+        List<TaskExcel> sortedList = new ArrayList<>();
+        for(SortCount sortCount : sortingList){
+            for(TaskExcel excel: sortCount.getTaskExcelList()){
+                sortedList.add(excel);
+            }
+        }
+        taskExelList = sortedList;
+    }
+
+    private static void mostBalanceMoneyAlgorithm() {
         //存放小组的容器
         List<TaskExcel> subList = null;
         System.out.println("正在匹配并分组数据中...");
@@ -846,7 +968,11 @@ public class Main {
         }
         //设置要不要未匹配
         if(args != null && args.length > 3){
-            Main.disableCompositeFile4UnmatchedData = Boolean.valueOf(args[3]);
+            Main.enableNoMatchedMod = Boolean.valueOf(args[3]);
+        }
+        //设置要不要未匹配
+        if(args != null && args.length > 4){
+            Main.algorithmIndex = Integer.valueOf(args[4]);
         }
     }
 }
