@@ -1,6 +1,7 @@
 import beans.MyPicture;
 import beans.SortCount;
 import beans.TaskExcel;
+import com.aliyun.oss.OSSClient;
 import org.apache.commons.collections4.Bag;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -11,6 +12,7 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import utils.ImportExcel;
+import utils.OSSClientUtil;
 
 import java.io.*;
 import java.math.BigDecimal;
