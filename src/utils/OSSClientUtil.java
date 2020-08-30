@@ -12,9 +12,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
+
 
 public class OSSClientUtil {
     /** 阿里云API的密钥Access Key ID */
@@ -26,7 +25,7 @@ public class OSSClientUtil {
     /** 阿里云API的bucket名称 */
     private static String bucketName = "maoziguo";
     /** 阿里云API的文件夹名称 */
-    private static List<String> folders = Arrays.asList(new String[]{"a/","b/","c/","d/","e/","f/","g/","h/","i/","j/","k/","l/","n/","m/","o/","p/"});
+    private static String folder = "picture/";
 
     /**
      * 创建存储空间
@@ -192,12 +191,12 @@ public class OSSClientUtil {
         // 创建OSSClient实例
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         // 上传
-        ossClient.putObject(OSSClientUtil.bucketName, OSSClientUtil.folders.get(0) + fileName, new ByteArrayInputStream(buf));
+        ossClient.putObject(OSSClientUtil.bucketName, folder + fileName, new ByteArrayInputStream(buf));
         // 关闭client
         ossClient.shutdown();
         Date expiration = new Date(new Date().getTime() + 3600l * 1000 * 24 * 365 * 10);
         //int random = (int)(Math.random() * (OSSClientUtil.folders.size() - 1));
-        URL url = ossClient.generatePresignedUrl(OSSClientUtil.bucketName, OSSClientUtil.folders.get(0) + fileName, expiration);
+        URL url = ossClient.generatePresignedUrl(OSSClientUtil.bucketName, folder + fileName, expiration);
         return url;
     }
 
@@ -217,7 +216,7 @@ public class OSSClientUtil {
         return bucketName;
     }
 
-    public static List<String> getFolders() {
-        return folders;
+    public static String getFolder() {
+        return folder;
     }
 }

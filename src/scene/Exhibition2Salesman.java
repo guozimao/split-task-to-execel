@@ -5,6 +5,7 @@ import beans.TaskExcel;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import utils.ImportExcel;
+import utils.OutportExcel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -37,11 +38,11 @@ public class Exhibition2Salesman {
         headerStyle.setAlignment(HorizontalAlignment.CENTER);
         headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         //给首行赋值
-        for (int k = 0; k < ImportExcel.EXCEL_HEADER.length; k++) {
+        for (int k = 0; k < OutportExcel.SALESMAN_EXCEL_HEADER.length; k++) {
             HSSFCell headerCell = headerRow.createCell(k);
-            headerCell.setCellValue(ImportExcel.EXCEL_HEADER[k]);
+            headerCell.setCellValue(OutportExcel.SALESMAN_EXCEL_HEADER[k]);
             headerCell.setCellStyle(headerStyle);
-            if(ImportExcel.EXCEL_HEADER[k].equals("主图") || ImportExcel.EXCEL_HEADER[k].equals("店铺名称（非掌柜名）")){
+            if(OutportExcel.SALESMAN_EXCEL_HEADER[k].equals("主图") || OutportExcel.SALESMAN_EXCEL_HEADER[k].equals("店铺名称（非掌柜名）")){
                 sheet.setColumnWidth(k, 255 * 30);
             } else {
                 sheet.setColumnWidth(k, 255 * 15);
@@ -166,9 +167,9 @@ public class Exhibition2Salesman {
             os.close();
             OutputStream out = null;
             if(disableCompositeFile4UnmatchedData){
-                out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
+                out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\salesman\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
             }else {
-                out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\data\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
+                out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\salesman\\data\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
             }
             out.write(fileContent);
             out.close();
@@ -198,11 +199,11 @@ public class Exhibition2Salesman {
         headerStyle.setAlignment(HorizontalAlignment.CENTER);
         headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         //给首行赋值
-        for (int k = 0; k < ImportExcel.EXCEL_HEADER.length; k++) {
+        for (int k = 0; k < OutportExcel.SALESMAN_EXCEL_HEADER.length; k++) {
             HSSFCell headerCell = headerRow.createCell(k);
-            headerCell.setCellValue(ImportExcel.EXCEL_HEADER[k]);
+            headerCell.setCellValue(OutportExcel.SALESMAN_EXCEL_HEADER[k]);
             headerCell.setCellStyle(headerStyle);
-            if(ImportExcel.EXCEL_HEADER[k].equals("主图") || ImportExcel.EXCEL_HEADER[k].equals("店铺名称（非掌柜名）")){
+            if(OutportExcel.SALESMAN_EXCEL_HEADER[k].equals("主图") || OutportExcel.SALESMAN_EXCEL_HEADER[k].equals("店铺名称（非掌柜名）")){
                 sheet.setColumnWidth(k, 255 * 30);
             } else {
                 sheet.setColumnWidth(k, 255 * 15);
@@ -314,7 +315,7 @@ public class Exhibition2Salesman {
             // 将输出流转换成字节数组
             byte[] fileContent = os.toByteArray();
             os.close();
-            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
+            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\salesman\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
             out.write(fileContent);
             out.close();
             workBook.close();
@@ -340,11 +341,11 @@ public class Exhibition2Salesman {
         headerStyle.setAlignment(HorizontalAlignment.CENTER);
         headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         //给首行赋值
-        for (int k = 0; k < ImportExcel.EXCEL_HEADER.length; k++) {
+        for (int k = 0; k < OutportExcel.SALESMAN_EXCEL_HEADER.length; k++) {
             HSSFCell headerCell = headerRow.createCell(k);
-            headerCell.setCellValue(ImportExcel.EXCEL_HEADER[k]);
+            headerCell.setCellValue(OutportExcel.SALESMAN_EXCEL_HEADER[k]);
             headerCell.setCellStyle(headerStyle);
-            if(ImportExcel.EXCEL_HEADER[k].equals("主图") || ImportExcel.EXCEL_HEADER[k].equals("店铺名称（非掌柜名）")){
+            if(OutportExcel.SALESMAN_EXCEL_HEADER[k].equals("主图") || OutportExcel.SALESMAN_EXCEL_HEADER[k].equals("店铺名称（非掌柜名）")){
                 sheet.setColumnWidth(k, 255 * 30);
             } else {
                 sheet.setColumnWidth(k, 255 * 15);
@@ -457,7 +458,7 @@ public class Exhibition2Salesman {
             // 将输出流转换成字节数组
             byte[] fileContent = os.toByteArray();
             os.close();
-            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\index.xls");
+            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\salesman\\index.xls");
             out.write(fileContent);
             out.close();
             workBook.close();

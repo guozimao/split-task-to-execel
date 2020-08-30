@@ -3,6 +3,7 @@ package utils;
 
 import beans.TaskExcel;
 
+import scene.BackgroundStorage;
 import scene.Exhibition2Salesman;
 
 import java.io.*;
@@ -13,6 +14,31 @@ import java.util.List;
 
 public class OutportExcel {
 
+    public static final String[] BACKGROUND_EXCEL_HEADER = new String[]{
+            "任务代码",
+            "日期",
+            "主图oss参数",
+            "店铺名称（非掌柜名）",
+            "链接",
+            "单价/元",
+            "单价备注",
+            "特殊备注",
+            "关键词1",
+            "关键词2"
+    };
+
+    public static final String[] SALESMAN_EXCEL_HEADER = new String[]{
+            "任务代码",
+            "日期",
+            "主图",
+            "店铺名称（非掌柜名）",
+            "单价/元",
+            "单价备注",
+            "特殊备注",
+            "关键词1",
+            "关键词2"
+    };
+
     /**
      * 批量导出excel表格
      *
@@ -21,7 +47,7 @@ public class OutportExcel {
                                  List<List<TaskExcel>> exportList,
                                  boolean enableNoMatchedMod,
                                  boolean disableHistoryTakeNo,
-                                 int baseNum,
+                                 Integer baseNum,
                                  List<TaskExcel> otherExportList) {
         //获取当前时间
         LocalDate currentDate = LocalDate.now();
@@ -31,16 +57,16 @@ public class OutportExcel {
         //创建文件目录
         String directory = null;
         if(disableCompositeFile4UnmatchedData){
-            directory = "D:\\work-space\\" + currentDate.format(dateTimeFormatter);
+            directory = "D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\salesman";
         }else{
-            directory = "D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\data";
+            directory = "D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\salesman\\data";
         }
         File file = new File(directory);
         if (!file.exists()) {
             file.mkdirs();
         }
 
-        System.out.println("开始导出excel");
+        System.out.println("开始导出Salesman的excel");
         // 匹配的组导出excel
         for (int i = 0; i< exportList.size(); i++){
             if(enableNoMatchedMod){
@@ -71,6 +97,41 @@ public class OutportExcel {
             }else {
                 Exhibition2Salesman.compositeFile4NoMatching2Excel(otherExportList,currentDate,dateTimeFormatter);
             }
+        }
+
+        System.out.println("导出excel结束");
+
+    }
+
+    /**
+     * 批量导出excel表格，没考虑未匹配模式
+     *
+     * */
+    public static void exportIO4BackgroundStorage(
+                                         List<List<TaskExcel>> exportList,
+                                         boolean enableNoMatchedMod) {
+        if(enableNoMatchedMod){
+            return;
+        }
+
+        //获取当前时间
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        int order = 0;
+
+        //创建文件目录
+        String directory = null;
+        directory = "D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\BackgroundStorage";
+        File file = new File(directory);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        System.out.println("开始导出BackgroundStorage的excel");
+        // 匹配的组导出excel
+        for (int i = 0; i< exportList.size(); i++){
+            BackgroundStorage.exportMatchingExcel(i,order,currentDate,dateTimeFormatter,exportList);
+            order ++;
         }
 
         System.out.println("导出excel结束");

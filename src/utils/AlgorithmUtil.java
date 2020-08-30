@@ -23,7 +23,7 @@ public class AlgorithmUtil {
      * 添加历史分组taskNO记录
      *
      * */
-    public static void setHistoryTaskNoList(List<TaskExcel> subList,int baseNum,List<List<String>> taskNoHistoryList) {
+    public static void setHistoryTaskNoList(List<TaskExcel> subList,Integer baseNum,List<List<String>> taskNoHistoryList) {
         //对于小于基数的小组不存历史
         if(subList.size() < baseNum) {
             return;
@@ -39,7 +39,7 @@ public class AlgorithmUtil {
      * 判断历史存在的小组编号
      *
      * */
-    public static boolean isExistHistoryTaskNo(TaskExcel taskExcel1, List<TaskExcel> subList,int baseNum,List<List<String>> taskNoHistoryList) {
+    public static boolean isExistHistoryTaskNo(TaskExcel taskExcel1, List<TaskExcel> subList,Integer baseNum,List<List<String>> taskNoHistoryList) {
         //对于小于基数-1的小组不校验
         if(subList.size() < (baseNum - 1)) {
             return false;

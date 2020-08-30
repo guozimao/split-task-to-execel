@@ -13,10 +13,10 @@ import java.util.*;
 public class MostMatchingAlgorithm {
 
     public static void doProcess(List<TaskExcel> taskExelList,
-                                 int baseNum,
+                                 Integer baseNum,
                                  List<List<TaskExcel>> exportList,
                                  boolean disableHistoryTakeNo,
-                                 int counter,
+                                 Integer counter,
                                  List<List<String>> taskNoHistoryList) {
         //存放小组的容器
         List<TaskExcel> subList = null;
@@ -108,12 +108,11 @@ public class MostMatchingAlgorithm {
                 }
             }
         });
-        List<TaskExcel> sortedList = new ArrayList<>();
+        taskExelList.clear();
         for(SortCount sortCount : sortingList){
             for(TaskExcel excel: sortCount.getTaskExcelList()){
-                sortedList.add(excel);
+                taskExelList.add(excel);
             }
         }
-        taskExelList = sortedList;
     }
 }

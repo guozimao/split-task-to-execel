@@ -4,16 +4,11 @@ import beans.MyPicture;
 import beans.TaskExcel;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import utils.ImportExcel;
 import utils.OSSClientUtil;
 import utils.OutportExcel;
 
 
-import java.io.*;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
@@ -23,9 +18,9 @@ public class Main {
     //任务列表
     private static List<TaskExcel> taskExelList = new LinkedList<>();
     //当前记录数
-    private static int counter = 1;
+    private static Integer counter = 1;
     //分组的基数(默认基数为4)
-    private static int baseNum = 4;
+    private static Integer baseNum = 4;
     //允许不允许takeNo组的历史重复
     private static Boolean disableHistoryTakeNo = true;
     //是否禁用对于未匹配进行合成文件
@@ -49,8 +44,9 @@ public class Main {
         ImportExcel.getExcelData(taskExelList);
         uploadPicture2Oss();
         doProcessTask();
-        OutportExcel.exportIO4Salesman(Main.disableCompositeFile4UnmatchedData,
+        OutportExcel.exportIO4Salesman(disableCompositeFile4UnmatchedData,
                 exportList,enableNoMatchedMod,disableHistoryTakeNo,baseNum,otherExportList);
+        OutportExcel.exportIO4BackgroundStorage(exportList,enableNoMatchedMod);
         System.exit(0);
     }
 

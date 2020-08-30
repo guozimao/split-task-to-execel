@@ -9,8 +9,8 @@ import java.util.*;
 public class MostBalanceMoneyAlgorithm {
 
     public static void doProcess(List<TaskExcel> taskExelList,
-                                  int baseNum,
-                                  int counter,
+                                  Integer baseNum,
+                                  Integer counter,
                                   List<List<TaskExcel>> exportList,
                                   Boolean disableHistoryTakeNo,
                                   List<List<String>> taskNoHistoryList) {
