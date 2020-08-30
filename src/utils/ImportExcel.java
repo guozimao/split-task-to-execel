@@ -8,10 +8,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -24,6 +22,7 @@ public class ImportExcel {
             "日期",
             "主图",
             "店铺名称（非掌柜名）",
+            "链接",
             "单价/元",
             "单价备注",
             "特殊备注",
@@ -162,5 +161,98 @@ public class ImportExcel {
 
     public static void setIs03Or07(Boolean is03Or07) {
         ImportExcel.is03Or07 = is03Or07;
+    }
+
+    /**
+     * 将excel中的数据读到taskExcelList中
+     *
+     * **/
+    public static void getExcelData(List<TaskExcel> taskExelList) {
+        Workbook wb =null;
+        Sheet sheet = null;
+        Row row = null;
+        Object cellData = null;
+        //创建文件目录
+        String directory = "D:\\work-space\\";
+        File file = new File(directory);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        String columns[] = ImportExcel.EXCEL_HEADER;
+
+        String filePath = "D:\\work-space\\index.xls";
+        wb = ImportExcel.readExcel(filePath);
+
+        System.out.println("正读取excel文件："+ filePath);
+
+        if(wb == null){
+            System.out.println("读取不到excel文件："+ filePath);
+            filePath = "D:\\work-space\\index.xlsx";
+            wb = ImportExcel.readExcel(filePath);
+            System.out.println("正读取excel文件："+ filePath);
+        }
+
+        if(wb != null){
+            //获取第一个sheet
+            sheet = wb.getSheetAt(0);
+            //获取最大行数
+            int rownum = sheet.getPhysicalNumberOfRows();
+            //获取第一行
+            row = sheet.getRow(0);
+            //获取最大列数
+            int colnum = row.getPhysicalNumberOfCells();
+            for (int i = 1; i<rownum; i++) {
+                TaskExcel task = new TaskExcel();
+                row = sheet.getRow(i);
+                if(row != null && row.getPhysicalNumberOfCells() > 0){
+                    Boolean isEmptyRow = false;
+                    task.setRowNum(row.getRowNum());
+                    for (int j=0;j<colnum;j++){
+                        cellData = ImportExcel.getCellFormatValue(row.getCell(j));
+                        if(columns[j].equals("任务代码")){
+                            //过滤掉空行数据
+                            if(cellData.equals("")){
+                                isEmptyRow = true;
+                                break;
+                            }
+                            task.setTaskNo((String)cellData);
+                        }else if(columns[j].equals("日期")){
+                            task.setDate((Date)cellData);
+                        }else if(columns[j].equals("店铺名称（非掌柜名）")){
+                            task.setStoreName((String)cellData);
+                        }else if(columns[j].equals("链接")){
+                            task.setPlatformUrl((String)cellData);
+                        } else if(columns[j].equals("单价/元")){
+                            task.setPrice(new BigDecimal((String)cellData));
+                        }else if(columns[j].equals("单价备注")){
+                            task.setNote((String)cellData);
+                        }else if(columns[j].equals("特殊备注")){
+                            task.setSpecialNote((String)cellData);
+                        }else if(columns[j].equals("关键词1")){
+                            task.setKeyWord1((String)cellData);
+                        }else if(columns[j].equals("关键词2")){
+                            task.setKeyWord2((String)cellData);
+                        }
+                    }
+                    if(!isEmptyRow){
+                        taskExelList.add(task);
+                    }
+                }else{
+                    break;
+                }
+            }
+            try {
+                if(ImportExcel.getIs03Or07()){
+                    ImportExcel.getHSSFPictures((HSSFSheet) sheet, taskExelList);
+                }else{
+                    ImportExcel.getXSSFPictures((XSSFSheet) sheet, taskExelList);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("读取excel完毕...");
+        }else {
+            System.out.println("读取不到excel文件："+ filePath);
+        }
     }
 }

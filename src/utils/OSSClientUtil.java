@@ -5,14 +5,16 @@ import com.aliyun.oss.model.Bucket;
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class OSSClientUtil {
     /** 阿里云API的密钥Access Key ID */
@@ -24,16 +26,7 @@ public class OSSClientUtil {
     /** 阿里云API的bucket名称 */
     private static String bucketName = "maoziguo";
     /** 阿里云API的文件夹名称 */
-    private static String folder = "picture";
-
-    /**
-     * 获取阿里云OSS客户端对象
-     *
-     * @return ossClient
-     */
-    public static OSSClient getOSSClient() {
-        return new OSSClient(endpoint, accessKeyId, accessKeySecret);
-    }
+    private static List<String> folders = Arrays.asList(new String[]{"a/","b/","c/","d/","e/","f/","g/","h/","i/","j/","k/","l/","n/","m/","o/","p/"});
 
     /**
      * 创建存储空间
@@ -199,12 +192,32 @@ public class OSSClientUtil {
         // 创建OSSClient实例
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         // 上传
-        ossClient.putObject(OSSClientUtil.bucketName, fileName, new ByteArrayInputStream(buf));
+        ossClient.putObject(OSSClientUtil.bucketName, OSSClientUtil.folders.get(0) + fileName, new ByteArrayInputStream(buf));
         // 关闭client
         ossClient.shutdown();
         Date expiration = new Date(new Date().getTime() + 3600l * 1000 * 24 * 365 * 10);
-        URL url = ossClient.generatePresignedUrl(OSSClientUtil.bucketName, OSSClientUtil.folder, expiration);
+        //int random = (int)(Math.random() * (OSSClientUtil.folders.size() - 1));
+        URL url = ossClient.generatePresignedUrl(OSSClientUtil.bucketName, OSSClientUtil.folders.get(0) + fileName, expiration);
         return url;
     }
 
+    public static String getAccessKeyId() {
+        return accessKeyId;
+    }
+
+    public static String getAccessKeySecret() {
+        return accessKeySecret;
+    }
+
+    public static String getEndpoint() {
+        return endpoint;
+    }
+
+    public static String getBucketName() {
+        return bucketName;
+    }
+
+    public static List<String> getFolders() {
+        return folders;
+    }
 }
