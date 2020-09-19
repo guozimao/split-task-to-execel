@@ -47,6 +47,7 @@ public class Main {
         OutportExcel.exportIO4Salesman(disableCompositeFile4UnmatchedData,
                 exportList,enableNoMatchedMod,disableHistoryTakeNo,baseNum,otherExportList);
         OutportExcel.exportIO4BackgroundStorage(exportList,enableNoMatchedMod);
+        OutportExcel.exportIO4PictureAndOssParam(exportList);
         System.exit(0);
     }
 
