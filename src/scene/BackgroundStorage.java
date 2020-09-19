@@ -1,10 +1,8 @@
 package scene;
 
-import beans.MyPicture;
 import beans.TaskExcel;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
-import utils.ImportExcel;
 import utils.OutportExcel;
 
 import java.io.ByteArrayOutputStream;
@@ -136,12 +134,9 @@ public class BackgroundStorage {
             hssfCell7.setCellStyle(contentStyle4Note);
 
             HSSFCell hssfCell8 = row.createCell(8);
-            hssfCell8.setCellValue(exportList.get(i).get(j).getKeyWord1());
+            hssfCell8.setCellValue(exportList.get(i).get(j).getKeyWord());
             hssfCell8.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell9 = row.createCell(9);
-            hssfCell9.setCellValue(exportList.get(i).get(j).getKeyWord2());
-            hssfCell9.setCellStyle(contentStyle);
 
             if(j == 0){
                 taskNoGroup = exportList.get(i).get(j).getTaskNo();

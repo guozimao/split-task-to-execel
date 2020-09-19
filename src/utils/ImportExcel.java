@@ -10,8 +10,6 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -26,8 +24,7 @@ public class ImportExcel {
             "单价/元",
             "单价备注",
             "特殊备注",
-            "关键词1",
-            "关键词2"
+            "关键词1"
     };
 
     private static Boolean is03Or07 = true;
@@ -229,9 +226,7 @@ public class ImportExcel {
                         }else if(columns[j].equals("特殊备注")){
                             task.setSpecialNote((String)cellData);
                         }else if(columns[j].equals("关键词1")){
-                            task.setKeyWord1((String)cellData);
-                        }else if(columns[j].equals("关键词2")){
-                            task.setKeyWord2((String)cellData);
+                            task.setKeyWord((String)cellData);
                         }
                     }
                     if(!isEmptyRow){

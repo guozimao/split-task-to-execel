@@ -4,12 +4,14 @@ package utils;
 import beans.TaskExcel;
 
 import scene.BackgroundStorage;
+import scene.ExHibition2Admin;
 import scene.Exhibition2Salesman;
 
 import java.io.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OutportExcel {
@@ -23,8 +25,7 @@ public class OutportExcel {
             "单价/元",
             "单价备注",
             "特殊备注",
-            "关键词1",
-            "关键词2"
+            "关键词"
     };
 
     public static final String[] SALESMAN_EXCEL_HEADER = new String[]{
@@ -35,8 +36,20 @@ public class OutportExcel {
             "单价/元",
             "单价备注",
             "特殊备注",
-            "关键词1",
-            "关键词2"
+            "关键词"
+    };
+
+    public static final String[] ADMIN_EXCEL_HEADER = new String[]{
+            "任务代码",
+            "日期",
+            "主图",
+            "主图oss参数",
+            "店铺名称（非掌柜名）",
+            "链接",
+            "单价/元",
+            "单价备注",
+            "特殊备注",
+            "关键词"
     };
 
     /**
@@ -136,5 +149,34 @@ public class OutportExcel {
 
         System.out.println("导出excel结束");
 
+    }
+
+    public static void exportIO4PictureAndOssParam(List<List<TaskExcel>> exportList) {
+        //获取当前时间
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+        //创建文件目录
+        String directory = null;
+
+        directory = "D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\admin";
+
+        File file = new File(directory);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        System.out.println("开始导出admin的excel");
+
+        List<TaskExcel> taskExcels = new ArrayList<>();
+        for(List<TaskExcel> excelList : exportList){
+            for(TaskExcel task : excelList){
+                taskExcels.add(task);
+            }
+        }
+
+        ExHibition2Admin.compositeFile4OssParam2Excel(taskExcels,currentDate,dateTimeFormatter);
+
+        System.out.println("导出admin的excel结束");
     }
 }

@@ -14,8 +14,7 @@ public class TaskExcel {
     private MyPicture myPicture;
     private String platformUrl;
     private String ossPictureParam;
-    private String keyWord1;
-    private String keyWord2;
+    private String keyWord;
 
     public String getSpecialNote() {
         return specialNote;
@@ -81,21 +80,14 @@ public class TaskExcel {
         this.myPicture = myPicture;
     }
 
-    public String getKeyWord1() {
-        return keyWord1;
+    public String getKeyWord() {
+        return keyWord;
     }
 
-    public void setKeyWord1(String keyWord1) {
-        this.keyWord1 = keyWord1;
+    public void setKeyWord(String keyWord) {
+        this.keyWord = keyWord;
     }
 
-    public String getKeyWord2() {
-        return keyWord2;
-    }
-
-    public void setKeyWord2(String keyWord2) {
-        this.keyWord2 = keyWord2;
-    }
 
     public String getPlatformUrl() {
         return platformUrl;

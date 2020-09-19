@@ -4,7 +4,6 @@ import beans.MyPicture;
 import beans.TaskExcel;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
-import utils.ImportExcel;
 import utils.OutportExcel;
 
 import java.io.ByteArrayOutputStream;
@@ -129,12 +128,9 @@ public class Exhibition2Salesman {
             hssfCell6.setCellStyle(contentStyle4Note);
 
             HSSFCell hssfCell7 = row.createCell(7);
-            hssfCell7.setCellValue(exportList.get(i).get(j).getKeyWord1());
+            hssfCell7.setCellValue(exportList.get(i).get(j).getKeyWord());
             hssfCell7.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell8 = row.createCell(8);
-            hssfCell8.setCellValue(exportList.get(i).get(j).getKeyWord2());
-            hssfCell8.setCellStyle(contentStyle);
 
             if(exportList.get(i).get(j).getMyPicture() != null){
                 //图片处理
@@ -290,12 +286,9 @@ public class Exhibition2Salesman {
         hssfCell6.setCellStyle(contentStyle4Note);
 
         HSSFCell hssfCell7 = row.createCell(7);
-        hssfCell7.setCellValue(otherExportList.get(i).getKeyWord1());
+        hssfCell7.setCellValue(otherExportList.get(i).getKeyWord());
         hssfCell7.setCellStyle(contentStyle);
 
-        HSSFCell hssfCell8 = row.createCell(8);
-        hssfCell8.setCellValue(otherExportList.get(i).getKeyWord2());
-        hssfCell8.setCellStyle(contentStyle);
 
         if(otherExportList.get(i).getMyPicture() != null){
             //图片处理
@@ -432,12 +425,9 @@ public class Exhibition2Salesman {
             hssfCell6.setCellStyle(contentStyle4Note);
 
             HSSFCell hssfCell7 = row.createCell(7);
-            hssfCell7.setCellValue(otherExportList.get(i).getKeyWord1());
+            hssfCell7.setCellValue(otherExportList.get(i).getKeyWord());
             hssfCell7.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell8 = row.createCell(8);
-            hssfCell8.setCellValue(otherExportList.get(i).getKeyWord2());
-            hssfCell8.setCellStyle(contentStyle);
 
             if(otherExportList.get(i).getMyPicture() != null){
                 //图片处理
