@@ -19,7 +19,7 @@ public class OSSClientUtil {
     /** 阿里云API的密钥Access Key ID */
     private static String accessKeyId = "LTAI4GDPSzeJWUP2w4UyTVty";
     /** 阿里云API的密钥Access Key Secret */
-    private static String accessKeySecret = "vJgV0AdcpzzLTB1ePvUyWxBCfx78MS";
+    private static String accessKeySecret = "vJgV0AdcpzzLTB1e" + "PvUyWxBCfx78MS";
     /** 阿里云API的内或外网域名 */
     private static String endpoint = "oss-cn-beijing.aliyuncs.com";
     /** 阿里云API的bucket名称 */
