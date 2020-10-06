@@ -115,24 +115,28 @@ public class ExHibition2Admin {
             hssfCell4.setCellStyle(contentStyle);
 
             HSSFCell hssfCell5 = row.createCell(5);
-            hssfCell5.setCellValue(excelExportList.get(i).getPlatformUrl());
+            hssfCell5.setCellValue(excelExportList.get(i).getCallCenter());
             hssfCell5.setCellStyle(contentStyle);
 
             HSSFCell hssfCell6 = row.createCell(6);
-            hssfCell6.setCellValue(excelExportList.get(i).getPrice().doubleValue());
+            hssfCell6.setCellValue(excelExportList.get(i).getPlatformUrl());
             hssfCell6.setCellStyle(contentStyle);
 
             HSSFCell hssfCell7 = row.createCell(7);
-            hssfCell7.setCellValue(excelExportList.get(i).getNote());
-            hssfCell7.setCellStyle(contentStyle4Note);
+            hssfCell7.setCellValue(excelExportList.get(i).getPrice().doubleValue());
+            hssfCell7.setCellStyle(contentStyle);
 
             HSSFCell hssfCell8 = row.createCell(8);
-            hssfCell8.setCellValue(excelExportList.get(i).getSpecialNote());
+            hssfCell8.setCellValue(excelExportList.get(i).getNote());
             hssfCell8.setCellStyle(contentStyle4Note);
 
             HSSFCell hssfCell9 = row.createCell(9);
-            hssfCell9.setCellValue(excelExportList.get(i).getKeyWord());
-            hssfCell9.setCellStyle(contentStyle);
+            hssfCell9.setCellValue(excelExportList.get(i).getSpecialNote());
+            hssfCell9.setCellStyle(contentStyle4Note);
+
+            HSSFCell hssfCell10 = row.createCell(10);
+            hssfCell10.setCellValue(excelExportList.get(i).getKeyWord());
+            hssfCell10.setCellStyle(contentStyle);
 
             if(excelExportList.get(i).getMyPicture() != null){
                 //图片处理

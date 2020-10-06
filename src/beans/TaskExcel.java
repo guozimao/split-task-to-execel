@@ -15,6 +15,7 @@ public class TaskExcel {
     private String platformUrl;
     private String ossPictureParam;
     private String keyWord;
+    private String callCenter;
 
     public String getSpecialNote() {
         return specialNote;
@@ -103,5 +104,13 @@ public class TaskExcel {
 
     public void setOssPictureParam(String ossPictureParam) {
         this.ossPictureParam = ossPictureParam;
+    }
+
+    public String getCallCenter() {
+        return callCenter;
+    }
+
+    public void setCallCenter(String callCenter) {
+        this.callCenter = callCenter;
     }
 }

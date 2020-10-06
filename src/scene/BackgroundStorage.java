@@ -118,24 +118,28 @@ public class BackgroundStorage {
             hssfCell3.setCellStyle(contentStyle);
 
             HSSFCell hssfCell4 = row.createCell(4);
-            hssfCell4.setCellValue(exportList.get(i).get(j).getPlatformUrl());
+            hssfCell4.setCellValue(exportList.get(i).get(j).getCallCenter());
             hssfCell4.setCellStyle(contentStyle);
 
             HSSFCell hssfCell5 = row.createCell(5);
-            hssfCell5.setCellValue(exportList.get(i).get(j).getPrice().doubleValue());
+            hssfCell5.setCellValue(exportList.get(i).get(j).getPlatformUrl());
             hssfCell5.setCellStyle(contentStyle);
 
             HSSFCell hssfCell6 = row.createCell(6);
-            hssfCell6.setCellValue(exportList.get(i).get(j).getNote());
-            hssfCell6.setCellStyle(contentStyle4Note);
+            hssfCell6.setCellValue(exportList.get(i).get(j).getPrice().doubleValue());
+            hssfCell6.setCellStyle(contentStyle);
 
             HSSFCell hssfCell7 = row.createCell(7);
-            hssfCell7.setCellValue(exportList.get(i).get(j).getSpecialNote());
+            hssfCell7.setCellValue(exportList.get(i).get(j).getNote());
             hssfCell7.setCellStyle(contentStyle4Note);
 
             HSSFCell hssfCell8 = row.createCell(8);
-            hssfCell8.setCellValue(exportList.get(i).get(j).getKeyWord());
-            hssfCell8.setCellStyle(contentStyle);
+            hssfCell8.setCellValue(exportList.get(i).get(j).getSpecialNote());
+            hssfCell8.setCellStyle(contentStyle4Note);
+
+            HSSFCell hssfCell9 = row.createCell(9);
+            hssfCell9.setCellValue(exportList.get(i).get(j).getKeyWord());
+            hssfCell9.setCellStyle(contentStyle);
 
 
             if(j == 0){

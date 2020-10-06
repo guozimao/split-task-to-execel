@@ -20,11 +20,12 @@ public class ImportExcel {
             "日期",
             "主图",
             "店铺名称（非掌柜名）",
+            "客服",
             "链接",
             "单价/元",
             "单价备注",
             "特殊备注",
-            "关键词1"
+            "关键词"
     };
 
     private static Boolean is03Or07 = true;
@@ -217,7 +218,9 @@ public class ImportExcel {
                             task.setDate((Date)cellData);
                         }else if(columns[j].equals("店铺名称（非掌柜名）")){
                             task.setStoreName((String)cellData);
-                        }else if(columns[j].equals("链接")){
+                        }else if(columns[j].equals("客服")){
+                            task.setCallCenter((String)cellData);
+                        } else if(columns[j].equals("链接")){
                             task.setPlatformUrl((String)cellData);
                         } else if(columns[j].equals("单价/元")){
                             task.setPrice(new BigDecimal((String)cellData));
@@ -225,7 +228,7 @@ public class ImportExcel {
                             task.setNote((String)cellData);
                         }else if(columns[j].equals("特殊备注")){
                             task.setSpecialNote((String)cellData);
-                        }else if(columns[j].equals("关键词1")){
+                        }else if(columns[j].equals("关键词")){
                             task.setKeyWord((String)cellData);
                         }
                     }
