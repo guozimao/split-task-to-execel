@@ -53,6 +53,8 @@ public class MostMatchingAlgorithm {
                         listIterator.remove();
                         break;
                     }
+                    //洗牌
+                    Collections.shuffle(subList);
                     exportList.add(subList);
                     AlgorithmUtil.setHistoryTaskNoList(subList,baseNum,taskNoHistoryList);
                 }else {
