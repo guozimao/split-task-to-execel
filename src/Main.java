@@ -56,6 +56,8 @@ public class Main {
         for(TaskExcel taskExcel:taskExelList){
             pUrlMyPictureMap.put(taskExcel.getPlatformUrl(),taskExcel.getMyPicture());
         }
+        pUrlMyPictureMap.remove("");
+        pUrlMyPictureMap.remove(null);
         Map<String,String> pUrlOssPictureParam = new HashMap<>();
         System.out.println("开始上传图片到阿里Oss服务器");
         for(Map.Entry<String,MyPicture> excelEntry:pUrlMyPictureMap.entrySet()){
@@ -119,7 +121,7 @@ public class Main {
         if(args != null && args.length > 3){
             Main.enableNoMatchedMod = Boolean.valueOf(args[3]);
         }
-        //设置要不要未匹配
+        //设置算法
         if(args != null && args.length > 4){
             Main.algorithmIndex = Integer.valueOf(args[4]);
         }
