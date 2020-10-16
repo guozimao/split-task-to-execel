@@ -11,6 +11,7 @@ import utils.OutportExcel;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class Main {
@@ -29,6 +30,8 @@ public class Main {
     private static Boolean enableNoMatchedMod = true;
     //选择算法
     private static Integer algorithmIndex = 0;
+    //补单
+    private static Boolean disableSupplementOrderMode = true;
     //算法
     private static List<String> algorithm = Arrays.asList(new String[]{"mostBalanceMoney","mostMatching"});
     //经算法处理后的列表
@@ -44,11 +47,21 @@ public class Main {
         ImportExcel.getExcelData(taskExelList);
         uploadPicture2Oss();
         doProcessTask();
-        OutportExcel.exportIO4Salesman(disableCompositeFile4UnmatchedData,
-                exportList,enableNoMatchedMod,disableHistoryTakeNo,baseNum,otherExportList);
-        OutportExcel.exportIO4BackgroundStorage(exportList,enableNoMatchedMod);
-        OutportExcel.exportIO4PictureAndOssParam(exportList);
+        outportExcel();
         System.exit(0);
+    }
+
+    private static void outportExcel() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        if(disableSupplementOrderMode){
+            OutportExcel.exportIO4Salesman(disableCompositeFile4UnmatchedData,
+                    exportList,enableNoMatchedMod,disableHistoryTakeNo,baseNum,otherExportList,currentDateTime);
+            OutportExcel.exportIO4BackgroundStorage(exportList,enableNoMatchedMod,currentDateTime);
+            OutportExcel.exportIO4PictureAndOssParam(exportList,currentDateTime);
+        }else {
+            OutportExcel.exportIO4PictureAndOssParam(exportList,currentDateTime);
+            OutportExcel.exportIO4SupplementOrder(exportList,currentDateTime);
+        }
     }
 
     private static void uploadPicture2Oss() {
@@ -124,6 +137,10 @@ public class Main {
         //设置算法
         if(args != null && args.length > 4){
             Main.algorithmIndex = Integer.valueOf(args[4]);
+        }
+        //设置是否处于补单模式
+        if(args != null && args.length > 5){
+            Main.disableSupplementOrderMode = Boolean.valueOf(args[5]);
         }
     }
 }

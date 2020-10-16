@@ -10,12 +10,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ExHibition2Admin {
-    public static void compositeFile4OssParam2Excel(List<TaskExcel> excelExportList, LocalDate currentDate, DateTimeFormatter dateTimeFormatter) {
+    public static void compositeFile4OssParam2Excel(List<TaskExcel> excelExportList, LocalDateTime currentDateTime, DateTimeFormatter dateTimeFormatter) {
         // 创建一个Excel工作薄
         HSSFWorkbook workBook = new HSSFWorkbook();
         HSSFSheet sheet = workBook.createSheet("sheet1");
@@ -157,7 +157,7 @@ public class ExHibition2Admin {
             // 将输出流转换成字节数组
             byte[] fileContent = os.toByteArray();
             os.close();
-            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\admin\\index.xls");
+            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDateTime.format(dateTimeFormatter) + "\\admin\\index.xls");
             out.write(fileContent);
             out.close();
             workBook.close();

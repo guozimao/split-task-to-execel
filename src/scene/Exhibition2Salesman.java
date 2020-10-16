@@ -12,12 +12,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Exhibition2Salesman {
 
-    public static void exportMatchingExcel(int i, int order, LocalDate currentDate, DateTimeFormatter dateTimeFormatter, List<List<TaskExcel>> exportList, boolean disableCompositeFile4UnmatchedData) {
+    public static void exportMatchingExcel(int i, int order, LocalDateTime currentDateTime, DateTimeFormatter dateTimeFormatter, List<List<TaskExcel>> exportList, boolean disableCompositeFile4UnmatchedData) {
         String taskNoGroup = null;
         BigDecimal total = new BigDecimal(0);
         // 创建一个Excel工作薄
@@ -167,9 +168,9 @@ public class Exhibition2Salesman {
             os.close();
             OutputStream out = null;
             if(disableCompositeFile4UnmatchedData){
-                out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\salesman\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
+                out = new FileOutputStream("D:\\work-space\\" + currentDateTime.format(dateTimeFormatter) + "\\salesman\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDateTime.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
             }else {
-                out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\salesman\\data\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
+                out = new FileOutputStream("D:\\work-space\\" + currentDateTime.format(dateTimeFormatter) + "\\salesman\\data\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDateTime.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
             }
             out.write(fileContent);
             out.close();
@@ -179,7 +180,7 @@ public class Exhibition2Salesman {
         }
     }
 
-    public static void exportNoMatchingExcel(int i, int order,LocalDate currentDate,DateTimeFormatter dateTimeFormatter,List<TaskExcel> otherExportList) {
+    public static void exportNoMatchingExcel(int i, int order,LocalDateTime currentDateTime,DateTimeFormatter dateTimeFormatter,List<TaskExcel> otherExportList) {
 
         String taskNoGroup = otherExportList.get(i).getTaskNo();
         BigDecimal total =  otherExportList.get(i).getPrice();
@@ -316,7 +317,7 @@ public class Exhibition2Salesman {
             // 将输出流转换成字节数组
             byte[] fileContent = os.toByteArray();
             os.close();
-            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\salesman\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDate.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
+            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDateTime.format(dateTimeFormatter) + "\\salesman\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDateTime.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
             out.write(fileContent);
             out.close();
             workBook.close();
@@ -325,7 +326,7 @@ public class Exhibition2Salesman {
         }
     }
 
-    public static void compositeFile4NoMatching2Excel(List<TaskExcel> otherExportList,LocalDate currentDate, DateTimeFormatter dateTimeFormatter) {
+    public static void compositeFile4NoMatching2Excel(List<TaskExcel> otherExportList,LocalDateTime currentDateTime, DateTimeFormatter dateTimeFormatter) {
         // 创建一个Excel工作薄
         HSSFWorkbook workBook = new HSSFWorkbook();
         HSSFSheet sheet = workBook.createSheet("sheet1");
@@ -460,7 +461,7 @@ public class Exhibition2Salesman {
             // 将输出流转换成字节数组
             byte[] fileContent = os.toByteArray();
             os.close();
-            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDate.format(dateTimeFormatter) + "\\salesman\\index.xls");
+            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDateTime.format(dateTimeFormatter) + "\\salesman\\index.xls");
             out.write(fileContent);
             out.close();
             workBook.close();

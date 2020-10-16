@@ -1,5 +1,6 @@
 package scene;
 
+import beans.MyPicture;
 import beans.TaskExcel;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
@@ -9,22 +10,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class BackgroundStorage {
-    public static void exportMatchingExcel(int i, int order, LocalDateTime currentDateTime, DateTimeFormatter dateTimeFormatter, List<List<TaskExcel>> exportList) {
-        String taskNoGroup = null;
-        BigDecimal total = new BigDecimal(0);
+public class BackgroundSupplementOrder {
+    public static void compositeFile4SupplementOrder2Excel(List<TaskExcel> excelExportList, LocalDateTime currentDateTime, DateTimeFormatter dateTimeFormatter) {
         // 创建一个Excel工作薄
         HSSFWorkbook workBook = new HSSFWorkbook();
         HSSFSheet sheet = workBook.createSheet("sheet1");
 
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
-
         // 创建首行，并赋值
         HSSFRow headerRow = sheet.createRow(0);
         HSSFFont headFont = workBook.createFont();
@@ -36,11 +32,11 @@ public class BackgroundStorage {
         headerStyle.setAlignment(HorizontalAlignment.CENTER);
         headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         //给首行赋值
-        for (int k = 0; k < OutportExcel.BACKGROUND_EXCEL_HEADER.length; k++) {
+        for (int k = 0; k < OutportExcel.SUPPLEMENT_ORDER_EXCEL_HEADER.length; k++) {
             HSSFCell headerCell = headerRow.createCell(k);
-            headerCell.setCellValue(OutportExcel.BACKGROUND_EXCEL_HEADER[k]);
+            headerCell.setCellValue(OutportExcel.SUPPLEMENT_ORDER_EXCEL_HEADER[k]);
             headerCell.setCellStyle(headerStyle);
-            if(OutportExcel.BACKGROUND_EXCEL_HEADER[k].equals("店铺名称（非掌柜名）")){
+            if(OutportExcel.SUPPLEMENT_ORDER_EXCEL_HEADER[k].equals("主图") || OutportExcel.SUPPLEMENT_ORDER_EXCEL_HEADER[k].equals("店铺名称（非掌柜名）")){
                 sheet.setColumnWidth(k, 255 * 30);
             } else {
                 sheet.setColumnWidth(k, 255 * 15);
@@ -98,60 +94,49 @@ public class BackgroundStorage {
         contentStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         contentStyle.setFont(bodyFont);
 
-        for (int j = 0; j < exportList.get(i).size(); j++){
-            HSSFRow row = sheet.createRow(j + 1);
+        for(int i=0;i < excelExportList.size(); i++){
+            HSSFRow row = sheet.createRow(i + 1);
 
             row.setHeight((short) 3219);
             HSSFCell hssfCell0 = row.createCell(0);
-            hssfCell0.setCellValue(exportList.get(i).get(j).getTaskNo());
+            hssfCell0.setCellValue(excelExportList.get(i).getTaskNo());
             hssfCell0.setCellStyle(contentStyle4TaskNo);
 
             HSSFCell hssfCell1 = row.createCell(1);
-            hssfCell1.setCellValue(exportList.get(i).get(j).getDate());
+            hssfCell1.setCellValue(excelExportList.get(i).getDate());
             hssfCell1.setCellStyle(dateStyle);
 
-            HSSFCell hssfCell2 = row.createCell(2);
-            hssfCell2.setCellValue(exportList.get(i).get(j).getOssPictureParam());
-            hssfCell2.setCellStyle(contentStyle);
-
-            HSSFCell hssfCell3 = row.createCell(3);
-            hssfCell3.setCellValue(exportList.get(i).get(j).getStoreName());
+            HSSFCell hssfCell3 = row.createCell(2);
+            hssfCell3.setCellValue(excelExportList.get(i).getOssPictureParam());
             hssfCell3.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell4 = row.createCell(4);
-            hssfCell4.setCellValue(exportList.get(i).get(j).getCallCenter());
+            HSSFCell hssfCell4 = row.createCell(3);
+            hssfCell4.setCellValue(excelExportList.get(i).getStoreName());
             hssfCell4.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell5 = row.createCell(5);
-            hssfCell5.setCellValue(exportList.get(i).get(j).getPlatformUrl());
+            HSSFCell hssfCell5 = row.createCell(4);
+            hssfCell5.setCellValue(excelExportList.get(i).getCallCenter());
             hssfCell5.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell6 = row.createCell(6);
-            hssfCell6.setCellValue(exportList.get(i).get(j).getPrice().doubleValue());
+            HSSFCell hssfCell6 = row.createCell(5);
+            hssfCell6.setCellValue(excelExportList.get(i).getPlatformUrl());
             hssfCell6.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell7 = row.createCell(7);
-            hssfCell7.setCellValue(exportList.get(i).get(j).getNote());
-            hssfCell7.setCellStyle(contentStyle4Note);
+            HSSFCell hssfCell7 = row.createCell(6);
+            hssfCell7.setCellValue(excelExportList.get(i).getPrice().doubleValue());
+            hssfCell7.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell8 = row.createCell(8);
-            hssfCell8.setCellValue(exportList.get(i).get(j).getSpecialNote());
+            HSSFCell hssfCell8 = row.createCell(7);
+            hssfCell8.setCellValue(excelExportList.get(i).getNote());
             hssfCell8.setCellStyle(contentStyle4Note);
 
-            HSSFCell hssfCell9 = row.createCell(9);
-            hssfCell9.setCellValue(exportList.get(i).get(j).getKeyWord());
-            hssfCell9.setCellStyle(contentStyle);
+            HSSFCell hssfCell9 = row.createCell(8);
+            hssfCell9.setCellValue(excelExportList.get(i).getSpecialNote());
+            hssfCell9.setCellStyle(contentStyle4Note);
 
-
-            if(j == 0){
-                taskNoGroup = exportList.get(i).get(j).getTaskNo();
-            }else {
-                taskNoGroup = taskNoGroup + "-" + exportList.get(i).get(j).getTaskNo();
-            }
-
-
-            total = total.add(exportList.get(i).get(j).getPrice());
-
+            HSSFCell hssfCell10 = row.createCell(9);
+            hssfCell10.setCellValue(excelExportList.get(i).getKeyWord());
+            hssfCell10.setCellStyle(contentStyle);
         }
         // 将Excel文件存在输出流中
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -161,7 +146,7 @@ public class BackgroundStorage {
             // 将输出流转换成字节数组
             byte[] fileContent = os.toByteArray();
             os.close();
-            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDateTime.format(dateTimeFormatter) + "\\BackgroundStorage\\" + (order+1) + taskNoGroup + "-" + total.toPlainString() + "-" + currentDateTime.format(DateTimeFormatter.ofPattern("MMdd")) +".xls");
+            OutputStream out = new FileOutputStream("D:\\work-space\\" + currentDateTime.format(dateTimeFormatter) + "\\supplementOrder\\index.xls");
             out.write(fileContent);
             out.close();
             workBook.close();
