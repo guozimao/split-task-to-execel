@@ -101,39 +101,35 @@ public class BackgroundSupplementOrder {
             hssfCell0.setCellValue(excelExportList.get(i).getTaskNo());
             hssfCell0.setCellStyle(contentStyle4TaskNo);
 
-            HSSFCell hssfCell1 = row.createCell(1);
-            hssfCell1.setCellValue(excelExportList.get(i).getDate());
-            hssfCell1.setCellStyle(dateStyle);
-
-            HSSFCell hssfCell3 = row.createCell(2);
+            HSSFCell hssfCell3 = row.createCell(1);
             hssfCell3.setCellValue(excelExportList.get(i).getOssPictureParam());
             hssfCell3.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell4 = row.createCell(3);
+            HSSFCell hssfCell4 = row.createCell(2);
             hssfCell4.setCellValue(excelExportList.get(i).getStoreName());
             hssfCell4.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell5 = row.createCell(4);
+            HSSFCell hssfCell5 = row.createCell(3);
             hssfCell5.setCellValue(excelExportList.get(i).getCallCenter());
             hssfCell5.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell6 = row.createCell(5);
+            HSSFCell hssfCell6 = row.createCell(4);
             hssfCell6.setCellValue(excelExportList.get(i).getPlatformUrl());
             hssfCell6.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell7 = row.createCell(6);
+            HSSFCell hssfCell7 = row.createCell(5);
             hssfCell7.setCellValue(excelExportList.get(i).getPrice().doubleValue());
             hssfCell7.setCellStyle(contentStyle);
 
-            HSSFCell hssfCell8 = row.createCell(7);
+            HSSFCell hssfCell8 = row.createCell(6);
             hssfCell8.setCellValue(excelExportList.get(i).getNote());
             hssfCell8.setCellStyle(contentStyle4Note);
 
-            HSSFCell hssfCell9 = row.createCell(8);
+            HSSFCell hssfCell9 = row.createCell(7);
             hssfCell9.setCellValue(excelExportList.get(i).getSpecialNote());
             hssfCell9.setCellStyle(contentStyle4Note);
 
-            HSSFCell hssfCell10 = row.createCell(9);
+            HSSFCell hssfCell10 = row.createCell(8);
             hssfCell10.setCellValue(excelExportList.get(i).getKeyWord());
             hssfCell10.setCellStyle(contentStyle);
         }

@@ -60,7 +60,6 @@ public class OutportExcel {
 
     public static final String[] SUPPLEMENT_ORDER_EXCEL_HEADER = new String[]{
             "任务代码",
-            "日期",
             "主图oss参数",
             "店铺名称（非掌柜名）",
             "客服",
