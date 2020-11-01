@@ -5,12 +5,12 @@ import com.aliyun.oss.model.Bucket;
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
+import net.coobird.thumbnailator.Thumbnails;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.net.URL;
 import java.util.Date;
 
@@ -198,6 +198,40 @@ public class OSSClientUtil {
         //int random = (int)(Math.random() * (OSSClientUtil.folders.size() - 1));
         URL url = ossClient.generatePresignedUrl(OSSClientUtil.bucketName, folder + fileName, expiration);
         return url;
+    }
+
+    public static ByteArrayOutputStream compressPicture(byte[] data){
+        try {
+            InputStream inputStream = new ByteArrayInputStream(data);
+
+            // 把图片读入到内存中
+            BufferedImage bufImg = ImageIO.read(inputStream);
+            // 压缩代码
+            //设置初始化的压缩率为1
+            float ratio = 1f ;
+            //设置压缩后的图片宽度为80
+            float width = 256f;
+            //获取原图片的宽度、高度
+            float ImgWith=bufImg.getWidth();
+            //float ImgHight=bufImg.getHeight();
+            //根据原始图片宽度，与压缩图宽度重新计算压缩率
+            if (ImgWith>width) {
+                ratio=width/ImgWith;
+            }
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            //按压缩率进行压缩
+            bufImg = Thumbnails.of(bufImg).scale(ratio).asBufferedImage();
+            //防止图片变红
+            //BufferedImage newBufferedImage = new BufferedImage(bufImg.getWidth()-100, bufImg.getHeight()-100, BufferedImage.TYPE_INT_RGB);
+            //newBufferedImage.createGraphics().drawImage(bufImg, 0, 0, Color.WHITE, null);
+            //先转成jpg格式来压缩,然后在通过OSS来修改成源文件本来的后缀格式
+            ImageIO.write(bufImg,"jpg",bos);
+            return bos;
+        } catch (Exception e) {
+            System.out.println("图片上传失败");
+        }
+        return null;
     }
 
     public static String getAccessKeyId() {

@@ -9,6 +9,7 @@ import utils.OSSClientUtil;
 import utils.OutportExcel;
 
 
+import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -74,8 +75,9 @@ public class Main {
         Map<String,String> pUrlOssPictureParam = new HashMap<>();
         System.out.println("开始上传图片到阿里Oss服务器");
         for(Map.Entry<String,MyPicture> excelEntry:pUrlMyPictureMap.entrySet()){
-            String pictureName = UUID.randomUUID().toString() + ".png";
-            URL pictureUrl = OSSClientUtil.picOSS(excelEntry.getValue().getPictureData().getData(),pictureName);
+            String pictureName = UUID.randomUUID().toString() + ".jpg";
+            ByteArrayOutputStream stream = OSSClientUtil.compressPicture(excelEntry.getValue().getPictureData().getData());
+            URL pictureUrl = OSSClientUtil.picOSS(stream.toByteArray(),pictureName);
             String path = pictureUrl.getPath();
             String queryParam = pictureUrl.getQuery();
             String expires = StringUtils.substringBetween(queryParam + "&","Expires=","&");
