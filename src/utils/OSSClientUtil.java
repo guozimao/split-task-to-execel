@@ -9,6 +9,8 @@ import net.coobird.thumbnailator.Thumbnails;
 
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
@@ -200,19 +202,20 @@ public class OSSClientUtil {
         return url;
     }
 
+    /**
+     * 图片压缩处理
+     *
+     * **/
     public static ByteArrayOutputStream compressPicture(byte[] data){
         try {
-            InputStream inputStream = new ByteArrayInputStream(data);
-
-            // 把图片读入到内存中
-            BufferedImage bufImg = ImageIO.read(inputStream);
+            Image images = new ImageIcon(data).getImage();
             // 压缩代码
             //设置初始化的压缩率为1
             float ratio = 1f ;
             //设置压缩后的图片宽度为80
             float width = 256f;
             //获取原图片的宽度、高度
-            float ImgWith=bufImg.getWidth();
+            float ImgWith = images.getWidth(null);
             //float ImgHight=bufImg.getHeight();
             //根据原始图片宽度，与压缩图宽度重新计算压缩率
             if (ImgWith>width) {
@@ -220,11 +223,10 @@ public class OSSClientUtil {
             }
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+            BufferedImage bufImg = toBufferedImage(images);
             //按压缩率进行压缩
             bufImg = Thumbnails.of(bufImg).scale(ratio).asBufferedImage();
-            //防止图片变红
-            //BufferedImage newBufferedImage = new BufferedImage(bufImg.getWidth()-100, bufImg.getHeight()-100, BufferedImage.TYPE_INT_RGB);
-            //newBufferedImage.createGraphics().drawImage(bufImg, 0, 0, Color.WHITE, null);
             //先转成jpg格式来压缩,然后在通过OSS来修改成源文件本来的后缀格式
             ImageIO.write(bufImg,"jpg",bos);
             return bos;
@@ -232,6 +234,35 @@ public class OSSClientUtil {
             System.out.println("图片上传失败");
         }
         return null;
+    }
+
+    public static BufferedImage toBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
+        }
+        // This code ensures that all the pixels in the image are loaded
+        image = new ImageIcon(image).getImage();
+        BufferedImage bimage = null;
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        try {
+            int transparency = Transparency.OPAQUE;
+            GraphicsDevice gs = ge.getDefaultScreenDevice();
+            GraphicsConfiguration gc = gs.getDefaultConfiguration();
+            bimage = gc.createCompatibleImage(image.getWidth(null), image.getHeight(null), transparency);
+        } catch (HeadlessException e) {
+            // The system does not have a screen
+        }
+        if (bimage == null) {
+            // Create a buffered image using the default color model
+            int type = BufferedImage.TYPE_INT_RGB;
+            bimage = new BufferedImage(image.getWidth(null), image.getHeight(null), type);
+        }
+        // Copy image to buffered image
+        Graphics g = bimage.createGraphics();
+        // Paint the image onto the buffered image
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return bimage;
     }
 
     public static String getAccessKeyId() {
